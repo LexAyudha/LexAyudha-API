@@ -24,12 +24,12 @@ exports.register = async (req, res) => {
 
   //Constructing the new user payload
   const newUser = {
-    userName: payload.userName,
-    email: payload.email,
-    image: payload.image,
+    userName: payload.userName || `user${Math.floor(Math.random() * 1000)}`,
+    email: payload.email, 
+    image: payload.image || `Default image path`, //Change this to default image path later,
     password: hashedPassword,
-    mobileNo: payload.mobileNo,
-    userRole: payload.userRole,
+    mobileNo: payload.mobileNo || `N/A`,
+    userRole: payload.userRole || `User`,
   };
 
   console.log(newUser);
