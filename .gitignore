@@ -32,3 +32,10 @@ coverage/
 # Build artifacts
 *.log
 *.pid
+
+#PyTorch files
+*.pth
+
+#Media files
+*.wav
+*.png

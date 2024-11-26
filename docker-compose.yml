@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  gateway:
+    container_name: gateway
+    build: ./ApiGateWay
+    ports:
+      - "8000:8000"
+
+  auth:
+    container_name: auth
+    build: ./AuthenticationService
+    ports:
+      - "8001:8001"
+
+  user:
+    container_name: user
+    build: ./UserService
+    ports:
+      - "8006:8006"

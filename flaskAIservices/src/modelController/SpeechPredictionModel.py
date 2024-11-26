@@ -1,11 +1,19 @@
 #model file
+import torch
+import os
 import torch  # PyTorch library
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
+import librosa
+import torchvision.transforms as transforms
+import numpy as np
 from torchvision import models
 from transformers import Wav2Vec2Model
 from torchvision.models.vgg import vgg16
+from PIL import Image
+
+
 
 class SpeechRateModel(nn.Module):
     def __init__(self, dropout_rate=0.5):
@@ -123,31 +131,81 @@ class SpeechRateModel(nn.Module):
 
 def load_model():
     """
-    Load the AI model from a .pth file.
+    Load the AI model from a .pth file with error handling.
     """
-    model_path = "path_to_your_model/model.pth"  # Replace with the actual path
-    model = SpeechRateModel()  # Replace with your model's class definition
-    model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
-    model.eval()  # Set the model to evaluation mode
-    return model
+    model_path = "src/assets/SpeechRateModel.pth"  # Replace with the actual path
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def predict_with_model(model, input_data):
-    """
-    Use the loaded model to predict results.
-    :param model: The loaded PyTorch model.
-    :param input_data: A dictionary containing input features.
-    :return: The model's prediction.
-    """
-    # Convert input data to a PyTorch tensor
-    features = torch.tensor(input_data["features"], dtype=torch.float32)
-    # Add batch dimension if input is not batched
-    if features.ndimension() == 1:
-        features = features.unsqueeze(0)
-
-    # Perform the prediction
-    with torch.no_grad():
-        output = model(features)
+    # Check if the file exists
+    if not os.path.exists(model_path):
+        return {"error": f"Model file not found at {model_path}"}
     
-    # Process output (depends on your model's architecture)
-    prediction = output.argmax(dim=1).item()  # Example for classification tasks
-    return prediction
+    try:
+        # Replace with your model's class definition
+        model = SpeechRateModel().to(device)  
+        
+        checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
+        model.load_state_dict(checkpoint['model_state_dict'])
+        model.eval()
+
+        return model
+    except Exception as e:
+        # Handle any exception that occurs during loading
+        return {"error": f"An error occurred while loading the model: {str(e)}"}
+
+def remove_files(spectrogram_file, audio_file):
+    """
+    Deletes the specified spectrogram and audio files.
+    """
+    try:
+        # Delete spectrogram file
+        if os.path.exists(spectrogram_file):
+            os.remove(spectrogram_file)
+            print(f"Deleted spectrogram file: {spectrogram_file}")
+        else:
+            print(f"Spectrogram file not found: {spectrogram_file}")
+
+        # Delete audio file
+        if os.path.exists(audio_file):
+            os.remove(audio_file)
+            print(f"Deleted audio file: {audio_file}")
+        else:
+            print(f"Audio file not found: {audio_file}")
+
+    except Exception as e:
+        print(f"Error deleting files: {str(e)}")
+
+
+def predict_with_model(model, spectrogram_file, audio_file):
+    """
+    Use the loaded model to predict speech rate.
+    """
+    try:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Spectrogram preprocessing
+        spectrogram_image = Image.open(spectrogram_file).convert('RGB')
+        transform = transforms.Compose([
+            transforms.Resize((224, 224)),  # Adjust resize dimensions if necessary
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+        spectrogram_tensor = transform(spectrogram_image).unsqueeze(0).to(device)
+        
+        # Audio preprocessing
+        signal, sr = librosa.load(audio_file)
+        rnn_input = torch.from_numpy(signal).unsqueeze(0).to(device)  # Use torch.from_numpy
+        
+        # Inference
+        model.eval()  # Set to evaluation mode before inference
+        with torch.no_grad():
+            prediction = model(spectrogram_tensor, rnn_input)  # Pass preprocessed inputs
+            predicted_number = prediction.item()
+        
+        remove_files(spectrogram_file,audio_file)
+        return predicted_number
+
+    except Exception as e:
+        remove_files(spectrogram_file,audio_file)
+        return {"error": f"An error occurred during prediction: {str(e)}"}
+
