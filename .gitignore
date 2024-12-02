@@ -35,6 +35,7 @@ coverage/
 
 #PyTorch files
 *.pth
+*.h5
 
 #Media files
 *.wav
