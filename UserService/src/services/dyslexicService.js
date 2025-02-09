@@ -3,7 +3,6 @@ const axios = require('axios');
 const NodeCache = require("node-cache"); //Implementing caching for sentence generation
 const cache = new NodeCache({ stdTTL: 18000 }); // TTL set to 5 hours in seconds
 
-
 const fallbackLessonList = [
   {
     id: '01',
