@@ -423,6 +423,7 @@ exports.getGeneratedSentences = async (req, res) => {
                 chapters: []
             }
 
+            // Calling the sentence generation endpoint
             try {
                 const response = await axios.get(
                     `http://localhost:8005/sentence/generate`,
