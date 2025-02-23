@@ -4,7 +4,7 @@
 
 const mongoose = require("mongoose");
 
-// Schema for dyslexic lessons
+// Schema for dyslexic lesson
 const dyslexicLessonsSchema = new mongoose.Schema(
   {
     
