@@ -7,7 +7,7 @@ const connectDB = require("./config/database");
 //Requires - Route classes
 const authRoutes = require("./src/routes/authRoutes");
 
-connectDB.getInstance();
+connectDB();
 
 app.use(cors());
 
