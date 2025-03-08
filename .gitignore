@@ -47,3 +47,8 @@ flaskAIservices/src/modelController/__pycache__
 # Media files
 *.wav
 *.png
+venv/*
+
+# source venv/bin/activate  
+#source /Users/isharakankanamge/Downloads/virtual-environment/myproject-env/bin/activate
+
