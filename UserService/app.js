@@ -1,19 +1,19 @@
-const express = require("express")
-const cors = require("cors")
-const connectDB = require('./config/database')
-const commonRoutes = require('./src/routes/commonRoutes')
-const adminRoutes =  require('./src/routes/adminRoutes')
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/database");
+const commonRoutes = require("./src/routes/commonRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
 
-connectDB.getInstance()
+connectDB();
 
-const app = express()
+const app = express();
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 //routes here
-app.use('/common', commonRoutes)
-app.use('/admin',adminRoutes)
+app.use("/common", commonRoutes);
+app.use("/admin", adminRoutes);
 
 //Exporting app to be used by the server.js
-module.exports = app
+module.exports = app;
