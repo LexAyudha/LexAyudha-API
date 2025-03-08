@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: SRS
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: SRS
+  template:
+    metadata:
+      labels:
+        app: SRS
+    spec:
+      containers:
+        - name: SRS
+          image: chillbroh98/SRS:latest
+          ports:
+            - containerPort: 8006

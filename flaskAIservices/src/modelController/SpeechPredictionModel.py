@@ -161,14 +161,14 @@ def remove_files(spectrogram_file, audio_file):
         # Delete spectrogram file
         if os.path.exists(spectrogram_file):
             os.remove(spectrogram_file)
-            print(f"Deleted spectrogram file: {spectrogram_file}")
+            print("Deleted temp spectrogram file")
         else:
             print(f"Spectrogram file not found: {spectrogram_file}")
 
         # Delete audio file
         if os.path.exists(audio_file):
             os.remove(audio_file)
-            print(f"Deleted audio file: {audio_file}")
+            print("Deleted temp audio file")
         else:
             print(f"Audio file not found: {audio_file}")
 
@@ -191,18 +191,21 @@ def predict_with_model(model, spectrogram_file, audio_file):
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
         spectrogram_tensor = transform(spectrogram_image).unsqueeze(0).to(device)
-        
+        print('Image transformations applied!')
+
         # Audio preprocessing
         signal, sr = librosa.load(audio_file)
-        rnn_input = torch.from_numpy(signal).unsqueeze(0).to(device)  # Use torch.from_numpy
+        rnn_input = torch.from_numpy(signal).unsqueeze(0).to(device) 
         
+        print('Inferencing the model')
         # Inference
-        model.eval()  # Set to evaluation mode before inference
+        model.eval()  # Setting to evaluation mode before inference
         with torch.no_grad():
             prediction = model(spectrogram_tensor, rnn_input)  # Pass preprocessed inputs
             predicted_number = prediction.item()
         
         remove_files(spectrogram_file,audio_file)
+        print(f"Predicted speech pace: {predicted_number}")
         return predicted_number
 
     except Exception as e:

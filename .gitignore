@@ -9,6 +9,7 @@ node_modules/
 dist/
 build/
 
+
 # Logs
 logs/
 
@@ -37,6 +38,8 @@ coverage/
 #PyTorch files
 *.pth
 *.h5
+__pycache__/
+
 
 #Media files
 *.wav
