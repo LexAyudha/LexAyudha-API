@@ -46,6 +46,7 @@ def create_mel_spectrogram(audio_path, output_path, file_name):
                     dpi=300)
         plt.close()  # Close the figure after saving
 
+        print('Mel Spectrogram created successfully!')
         return output_file_path
     
     except Exception as e:
@@ -73,6 +74,7 @@ def preprocess_audio(file_path, target_length=target_length):
 
         processed_audio.export(new_file_path, format="wav")  # Adjust format as needed
 
+        print('Audio preprocessed successfully!')
         print(f"File saved as: {new_file_path}")
         return new_file_path
     
@@ -81,6 +83,7 @@ def preprocess_audio(file_path, target_length=target_length):
         return False
 
 def make_prediction(temp_path, temp_audio_path, temp_img_name, temp_audio_name):
+
     preprocessed_audio_path = preprocess_audio(temp_audio_path)
 
     if not preprocessed_audio_path:
@@ -90,8 +93,6 @@ def make_prediction(temp_path, temp_audio_path, temp_img_name, temp_audio_name):
     
     if not spectrogram_path:
         return 'Error in spectrogram creation'
-    
-    
 
     # Use the model to make predictions
     prediction = predict_with_model(SpeechPredict_model, spectrogram_path, preprocessed_audio_path)
