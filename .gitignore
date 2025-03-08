@@ -33,14 +33,16 @@ coverage/
 # Build artifacts
 *.log
 *.pid
-*.pyc
 
 #PyTorch files
 *.pth
-*.h5
+*.pyc
 __pycache__/
 
 
 #Media files
 *.wav
 *.png
+venv/*
+
+# source venv/bin/activate  
