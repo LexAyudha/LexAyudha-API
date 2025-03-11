@@ -9,7 +9,6 @@ node_modules/
 dist/
 build/
 
-
 # Logs
 logs/
 
@@ -33,16 +32,18 @@ coverage/
 # Build artifacts
 *.log
 *.pid
-
-#PyTorch files
-*.pth
 *.pyc
-__pycache__/
 
+# PyTorch files
+*.pth
+*.h5
 
-#Media files
+# Ignore all __pycache__ directories
+**/__pycache__/
+flaskAIservices/src/routes/__pycache__
+flaskAIservices/src/services/__pycache__
+flaskAIservices/src/modelController/__pycache__
+
+# Media files
 *.wav
 *.png
-venv/*
-
-#source /Users/isharakankanamge/Downloads/virtual-environment/venv/bin/activate
