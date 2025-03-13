@@ -3,11 +3,13 @@
  * @functionality - extract JSON payload, setting response header, handling business logic, and setting up JWT tokens
  */
 const bcryptjs = require("bcryptjs");
+const CryptoJS = require('crypto-js');
 const jwt = require("jsonwebtoken");
-const { createUser, getUserByName } = require("../controllers/userController");
+const { createUser, getUserByField } = require("../controllers/userController");
 const saltCount = 10;
 const HttpStatus = require("../enums/httpStatus");
 const { getAccessToken, getRefreshToken } = require("../services/jwtService");
+const userModel = require("../models/userModel");
 
 require("dotenv").config();
 
@@ -18,22 +20,30 @@ const hashPasswordGen = async (plainPsw) => {
 };
 
 exports.register = async (req, res) => {
-  const payload = req.body;
+  const payload = req?.body;
+  console.log('Alpha')
+  const existingUser = await userModel.findOne({
+    $or: [
+      { userName: payload?.userName },
+      { email: payload?.email }
+    ]
+  });
 
-  const hashedPassword = await hashPasswordGen(payload.password);
+  if (existingUser) {
+    return res.status(HttpStatus.CONFLICT).json({ message: 'User with the same email or username already exists' });
+  }
+
+  const hashedPassword = await hashPasswordGen(payload?.password);
 
   //Constructing the new user payload
   const newUser = {
-    userName: payload.userName || `user${Math.floor(Math.random() * 1000)}`,
-    email: payload.email, 
-    image: payload.image || `Default image path`, //Change this to default image path later,
+    userName: payload?.userName || `user${Math.floor(Math.random() * 1000)}`,
+    email: payload?.email, 
+    proPic: payload?.proPic || `Default image path`, //Change this to default image path later,
+    coverPic:payload?.coverPic || `default image path`,
     password: hashedPassword,
-    mobileNo: payload.mobileNo || `N/A`,
-    userRole: payload.userRole || `User`,
   };
-
-  console.log(newUser);
-
+  
   //Registering the user with createUser function in userController.js
   const response = await createUser(newUser);
 
@@ -46,68 +56,60 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const payload = req.body;
+  const payload = req?.body;
+  const filterField = { email: payload?.email };
 
-  const foundUser = await getUserByName(payload.userName);
+  const foundUsers = await getUserByField(filterField);
+ 
+  if (foundUsers?.status === HttpStatus.OK) {
+    const users = foundUsers?.body;
+    let authenticatedUser = null;
 
-  if (foundUser.status === HttpStatus.OK) {
-    const retrivedUser = foundUser.body;
-    console.log("user is ", retrivedUser);
+    for (const user of users) {
+      
+      const checkPswMatch = await bcryptjs.compare(payload?.password, user?.password);
+      if (checkPswMatch) {
+        authenticatedUser = user;
+        break;
+      }
+    }
 
-    if (retrivedUser) {
-      //Once the user is found in the system check for password matching to validate the user
-      const checkPswMatch = await bcryptjs.compare(
-        payload.password,
-        retrivedUser.password
+    if (authenticatedUser) {
+      // Setting up the JWT tokens. Access token contains userID and user type. Expires in 1 hour. Refresh token only store the user id. Expires in 3 months
+      const accessToken = getAccessToken(
+        authenticatedUser?._id,
+        authenticatedUser?.userName,
+        authenticatedUser?.email,
+       
+      );
+      const refreshToken = getRefreshToken(
+        authenticatedUser?._id,
+        authenticatedUser?.userName,
+        authenticatedUser?.email,
       );
 
-      //if password matches, authenticate the user with JWT Token
-      if (checkPswMatch === true) {
-        //Setting up the JWT tokens. Access token contains userID and user type. Expires in 1 hour. Refresh token only store the user id. Expires in 3 months
-        const accessToken = getAccessToken(
-          retrivedUser._id,
-          retrivedUser.userRole,
-          retrivedUser.userName,
-          retrivedUser.image
-        );
-        const refreshToken = getRefreshToken(
-          retrivedUser._id,
-          retrivedUser.userRole,
-          retrivedUser.userName,
-          retrivedUser.image
-        );
-
-        //Setting the response header with OK and dispatching the JWT Tokens in a JSON body
-        res
-          .status(HttpStatus.OK)
-          .json({ accessToken: accessToken, refreshToken: refreshToken });
-      } else {
-        //If password didn't match, unauthorize the login request
-        res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ body: "User authentication failed!" });
-      }
+      // Setting the response header with OK and dispatching the JWT Tokens in a JSON body
+      res.status(HttpStatus.OK).json({ accessToken: accessToken, refreshToken: refreshToken });
     } else {
-      res
-        .status(HttpStatus.UNAUTHORIZED)
-        .json({ body: "User authentication failed!" });
+      // If password didn't match, unauthorize the login request
+      res.status(HttpStatus.UNAUTHORIZED).json({ body: "User authentication failed!" });
     }
   } else {
-    //if user not found sets request headers to unauthorized and sends authentication failed message to the client
-    res
-      .status(HttpStatus.UNAUTHORIZED)
-      .json({ body: "User authentication failed!" });
+    // if user not found sets request headers to unauthorized and sends authentication failed message to the client
+    res.status(HttpStatus.UNAUTHORIZED).json({ body: "User authentication failed!" });
   }
 };
 
-//logout user
-exports.logout = async (req, res, next) => {
-  res.cookie("jwt", "loggedout", {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-  res.status(200).json({
-    status: "success",
-    message: "logged Out!",
-  });
+exports.generateOTP = async (req, res) => {
+  try {
+    const otp = Math.floor(10000 + Math.random() * 90000).toString();
+    //send the otp to the user's email in here
+    console.log(otp)
+    // const hashedOtp = CryptoJS.SHA256(otp).toString(CryptoJS.enc.Hex);
+
+    res.status(HttpStatus.OK).json({ otp: otp });
+  } catch (error) {
+    console.error(error);
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating OTP' });
+  }
 };

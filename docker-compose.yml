@@ -18,3 +18,10 @@ services:
     build: ./UserService
     ports:
       - "8006:8006"
+
+  flask:
+    container_name: flask
+    build: ./flaskAIservices
+    ports:
+      - "8007:8007"
+      
