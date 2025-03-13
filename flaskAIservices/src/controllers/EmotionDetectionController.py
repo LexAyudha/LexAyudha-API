@@ -36,7 +36,7 @@ def get_emotion_prediction():
 
         try:
             # Use the temporary file for prediction
-            result = make_emotion_prediction(temp_file_path)
+            result = make_emotion_prediction(temp_file_path,'343434','53545345')
 
             # Return prediction result
             return jsonify({"prediction": result}), 200
