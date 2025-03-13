@@ -24,9 +24,10 @@ exports.verifyToken = async (req) => {
     //Decodes token and extract user data
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userData = {
-      userId: decoded.userId,
-      userType: decoded.userType,
-      userName: decoded.userName
+      userId: decoded?.userId,
+      userName: decoded?.userName,
+      email: decoded?.email,
+
     };
 
     return { status: HttpStatus.OK, body: userData };
@@ -51,10 +52,10 @@ exports.generateNewAccessToken = (req, res) => {
   try {
     //Decodes token and extract user data
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.userId;
+    const userId = decoded?.userId;
 
     const accessToken = jwt.sign(
-      { userId: userId, userType: "ADMIN" },
+      { userId: userId },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -69,9 +70,9 @@ exports.generateNewAccessToken = (req, res) => {
 };
 
 //Generates access token
-exports.getAccessToken = (userId, userRole, userName, image) => {
+exports.getAccessToken = (userId, userName, email) => {
   const accessToken = jwt.sign(
-    { userId: userId, userRole: userRole, userName: userName, image: image },
+    { userId: userId, userName: userName, email: email },
     process.env.JWT_SECRET,
     { expiresIn: "3h" }
   );
@@ -80,9 +81,9 @@ exports.getAccessToken = (userId, userRole, userName, image) => {
 };
 
 //Generates refresh token
-exports.getRefreshToken = (userId, userRole, userName, image) => {
+exports.getRefreshToken = (userId, userName, email) => {
   const refreshToken = jwt.sign(
-    { userId: userId, userRole: userRole, userName: userName, image: image },
+    { userId: userId, userName: userName, email: email },
     process.env.JWT_SECRET,
     { expiresIn: "90d" }
   );
