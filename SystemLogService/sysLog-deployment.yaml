@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sysLog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sysLog
+  template:
+    metadata:
+      labels:
+        app: sysLog
+    spec:
+      containers:
+        - name: sysLog
+          image: chillbroh98/sysLog:latest
+          ports:
+            - containerPort: 8008
