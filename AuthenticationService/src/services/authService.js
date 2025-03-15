@@ -65,7 +65,7 @@ exports.login = async (req, res) => {
   const filterField = { email: payload?.email };
 
   const foundUsers = await getUserByField(filterField);
- 
+
   if (foundUsers?.status === HttpStatus.OK) {
     const users = foundUsers?.body;
     let authenticatedUser = null;
