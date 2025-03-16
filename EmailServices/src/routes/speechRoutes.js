@@ -5,25 +5,22 @@
 //Requires
 const express = require('express')
 const router = express.Router()
-const { updateUser, deleteUser, getAllUserByType, getUserById } = require('../services/commonService')
+const { updateSpeechRate, deleteSpeechRate, getSpeechRate } = require('../services/speechService')
 
+// Get speech rate of a user
 router.get('/:id', async (req, res) => {
-  await getAllUserByType(req, res)
+  await getSpeechRate(req, res)
 })
 
-router.get('/user/:id', async(req,res) => {
-  await getUserById(req,res)
-})
 
-//Save preferences
+//Save updated speech rate
 router.patch('/', async (req, res) => {
-
-  await updateUser(req, res)
+  await updateSpeechRate(req, res)
 })
 
-//Delete learner
+//Delete speech rate
 router.delete('/', async (req, res) => {
-  await deleteUser(req, res)
+  await deleteSpeechRate(req, res)
 })
 
 

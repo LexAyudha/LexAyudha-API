@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: emailServices
+spec:
+  selector:
+    app: emailServices
+  ports:
+    - protocol: TCP
+      port: 8007
+      targetPort: 8007

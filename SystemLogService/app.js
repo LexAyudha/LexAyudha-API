@@ -1,7 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const connectDB = require('./config/database')
-const speechRoutes = require('./src/routes/speechRoutes')
+const logRoutes = require('./src/routes/logRoutes')
 
 
 connectDB();
@@ -12,7 +12,7 @@ app.use(cors())
 app.use(express.json())
 
 //routes here
-app.use('/', speechRoutes)
+app.use('/', logRoutes)
 
 
 //Exporting app to be used by the server.js

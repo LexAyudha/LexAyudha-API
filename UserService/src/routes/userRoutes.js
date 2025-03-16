@@ -5,19 +5,18 @@
 //Requires
 const express = require('express')
 const router = express.Router()
-const { updateUser, deleteUser, getAllUserByType, getUserById } = require('../services/commonService')
+const { updateUser, deleteUser, getUserById, getUserAllDetails } = require('../services/userService')
 
-router.get('/:id', async (req, res) => {
-  await getAllUserByType(req, res)
-})
 
-router.get('/user/:id', async(req,res) => {
+router.get('/:id', async(req,res) => {
   await getUserById(req,res)
 })
 
+router.get('/allDetails/:id', async(req,res) => {
+  await getUserAllDetails(req,res)
+})
 //Save preferences
-router.patch('/', async (req, res) => {
-
+router.patch('/:id', async (req, res) => {
   await updateUser(req, res)
 })
 

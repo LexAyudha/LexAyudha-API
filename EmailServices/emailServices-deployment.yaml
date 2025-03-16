@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emailServices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emailServices
+  template:
+    metadata:
+      labels:
+        app: emailServices
+    spec:
+      containers:
+        - name: emailServices
+          image: chillbroh98/emailServices:latest
+          ports:
+            - containerPort: 8007

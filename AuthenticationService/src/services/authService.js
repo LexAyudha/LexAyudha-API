@@ -21,11 +21,16 @@ const hashPasswordGen = async (plainPsw) => {
 
 exports.register = async (req, res) => {
   const payload = req?.body;
-  console.log('Alpha')
+ 
   const existingUser = await userModel.findOne({
-    $or: [
-      { userName: payload?.userName },
-      { email: payload?.email }
+    $and: [
+      {
+        $or: [
+          { userName: payload?.userName },
+          { email: payload?.email }
+        ]
+      },
+      { isActive: true }
     ]
   });
 
@@ -39,8 +44,8 @@ exports.register = async (req, res) => {
   const newUser = {
     userName: payload?.userName || `user${Math.floor(Math.random() * 1000)}`,
     email: payload?.email, 
-    proPic: payload?.proPic || `Default image path`, //Change this to default image path later,
-    coverPic:payload?.coverPic || `default image path`,
+    proPic: payload?.proPic || process.env.DEFAULT_PROFILE_PICTURE,
+    coverPic:payload?.coverPic || process.env.DEFAULT_COVER_PICTURE,
     password: hashedPassword,
   };
   
@@ -60,13 +65,15 @@ exports.login = async (req, res) => {
   const filterField = { email: payload?.email };
 
   const foundUsers = await getUserByField(filterField);
- 
+
   if (foundUsers?.status === HttpStatus.OK) {
     const users = foundUsers?.body;
     let authenticatedUser = null;
 
     for (const user of users) {
-      
+      if(user?.isActive === false) {
+        break;
+      }
       const checkPswMatch = await bcryptjs.compare(payload?.password, user?.password);
       if (checkPswMatch) {
         authenticatedUser = user;
