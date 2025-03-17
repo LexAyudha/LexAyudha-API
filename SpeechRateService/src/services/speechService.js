@@ -1,6 +1,14 @@
 const { updateSpeech, getSpeech, insertSpeech } = require('../controllers/speechController')
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Set the destination for uploaded files
+const FormData = require('form-data');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+const axios = require('axios');
+const HttpStatus = require('../enums/httpStatus');
+
+// Configure multer for file uploads
+const upload = multer({ storage: multer.memoryStorage() });
 
 exports.insertSpeechRate = async (req, res) => {
   upload.single('speechFile')(req, res, async (err) => {
@@ -11,7 +19,7 @@ exports.insertSpeechRate = async (req, res) => {
     const speechFile = req.file;
     const userId = req?.body?.id;
 
-    const response = await insertSpeech(userId,speechFile);
+    const response = await insertSpeech(userId, speechFile);
     res.status(response.status).json(response.body);
   });
 }
@@ -41,3 +49,70 @@ exports.getSpeechRate = async (req, res) => {
   const response = await getSpeech(id);
   res.status(response.status).json(response.body);
 }
+
+exports.processSpeechRate = async (req, res) => {
+  console.log('Passing processSpeechRate')
+  const userId = req?.params?.id;
+  const files = req?.files;
+  
+  if (!files || files?.length === 0) {
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'No speech files uploaded' });
+  }
+
+  try {
+    let totalSpeechRate = 0;
+    const tempPath = path.join(__dirname, 'temp');
+    if (!fs.existsSync(tempPath)) {
+      fs.mkdirSync(tempPath, { recursive: true });
+    }
+
+    for (const file of files) {
+      const tempFilePath = path.join(tempPath, file.originalname);
+      fs.writeFileSync(tempFilePath, file.buffer);
+
+      const formData = new FormData();
+
+      formData.append('file', fs.readFileSync(tempFilePath),{
+        filename: file.originalname,
+        contentType: file.mimetype,
+        knownLength: file.size
+      });
+
+      const flaskResponse = await axios.post('http://127.0.0.1:5000/api/v1/predict/speech', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Clean up temp file
+      fs.unlinkSync(tempFilePath);
+
+      if (flaskResponse.status !== 200) {
+        throw new Error('Failed to process speech rate');
+      }
+
+      totalSpeechRate += flaskResponse?.data?.prediction;
+    }
+
+    const averageSpeechRate = totalSpeechRate / files?.length;
+
+    if (isNaN(averageSpeechRate)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: 'Could not calculate valid speech rate'
+      });
+    }
+    // Update the user service API with the calculated average speech rate
+    const userServiceResponse = await axios.patch(`http://127.0.0.1:8000/api/user/${userId}`, {
+      speechRate: averageSpeechRate,
+    });
+
+    if (userServiceResponse.status !== 200) {
+      throw new Error('Failed to update speech rate in user service');
+    }
+
+    res.status(HttpStatus.OK).json({ message: 'Speech rate processed and updated successfully', averageSpeechRate });
+  } catch (error) {
+    console.error(error);
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+  }
+};
