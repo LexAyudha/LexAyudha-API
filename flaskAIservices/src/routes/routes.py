@@ -11,7 +11,7 @@ emotion_detection_route = Blueprint("emotionDetectionRoute", __name__)
 def predict():
     return get_prediction()
 
-@emotion_detection_route.route("/v1/emotion/detection", methods=["POST"])
+@emotion_detection_route.route("/predict", methods=["POST"])
 def emotion_predict():
     return get_emotion_prediction()
 
