@@ -15,7 +15,16 @@ exports.getUserByName = async (Name) => {
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
-
+exports.getUserByField = async (userField) => {
+    try {
+        const response = await userBaseModel.find(userField)
+        
+        return { status: HTTPStatus.OK, body: response }
+    } catch (error) {
+        console.log(error)
+        return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
+    }
+}
 //Not working yet - ToBe Fixed
 exports.saveUserPreferences = async (userId, payload) => {
     try {
