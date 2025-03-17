@@ -5,12 +5,18 @@
 //Requires
 const express = require('express')
 const router = express.Router()
-const { updateUser, deleteUser, getUserById, getUserAllDetails } = require('../services/userService')
+const { updateUser, deleteUser, getUserById, getUserAllDetails, getUsersList } = require('../services/userService')
 
 
 router.get('/:id', async(req,res) => {
   await getUserById(req,res)
 })
+
+
+router.get('/list/:email', async(req,res) => {
+  await getUsersList(req,res)
+})
+
 
 router.get('/allDetails/:id', async(req,res) => {
   await getUserAllDetails(req,res)

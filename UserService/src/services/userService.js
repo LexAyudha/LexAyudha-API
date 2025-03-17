@@ -1,4 +1,4 @@
-const { saveUserPreferences, softDeleteUser, getUser, updateProfileImagePath, updateCoverImagePath, getBadge,getBillingHistory,getTrainingSession,getSubscriptionDetails } = require('../controllers/userController')
+const { saveUserPreferences, softDeleteUser, getUser, updateProfileImagePath, updateCoverImagePath, getBadge,getBillingHistory,getTrainingSession,getSubscriptionDetails, getUserByField } = require('../controllers/userController')
 const HttpStatus = require('../enums/httpStatus')
 const { fireBaseStorage } = require('../../config/firebase')
 const { ref, uploadBytes, getDownloadURL } = require("firebase/storage")
@@ -25,6 +25,15 @@ exports.getUserById = async (req, res) => {
     const userId = req?.params?.id
 
     const response = await getUser(userId)
+
+    res.status(response.status).json(response.body)
+}
+
+exports.getUsersList = async(req, res) => {
+    const userField = {
+        email:req?.params?.email
+    }
+    const response = await getUserByField(userField)
 
     res.status(response.status).json(response.body)
 }
