@@ -5,7 +5,7 @@
 //Requires
 const express = require('express')
 const router = express.Router()
-const { updateSpeechRate, deleteSpeechRate, getSpeechRate } = require('../services/speechService')
+const { updateSpeechRate, deleteSpeechRate, getSpeechRate} = require('../services/speechService')
 
 // Get speech rate of a user
 router.get('/:id', async (req, res) => {
