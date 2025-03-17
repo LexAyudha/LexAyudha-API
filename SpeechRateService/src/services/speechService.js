@@ -51,7 +51,7 @@ exports.getSpeechRate = async (req, res) => {
 }
 
 exports.processSpeechRate = async (req, res) => {
-  console.log('Passing processSpeechRate')
+  
   const userId = req?.params?.id;
   const files = req?.files;
   
@@ -78,7 +78,7 @@ exports.processSpeechRate = async (req, res) => {
         knownLength: file.size
       });
 
-      const flaskResponse = await axios.post('http://127.0.0.1:5000/api/v1/predict/speech', formData, {
+      const flaskResponse = await axios.post('http://0.0.0.0:8005/api/v1/predict/speech', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -90,11 +90,13 @@ exports.processSpeechRate = async (req, res) => {
       if (flaskResponse.status !== 200) {
         throw new Error('Failed to process speech rate');
       }
-
+      console.log(`Speech prediction for ${file?.originalname}: ${flaskResponse?.data?.prediction}`)
       totalSpeechRate += flaskResponse?.data?.prediction;
     }
-
-    const averageSpeechRate = totalSpeechRate / files?.length;
+    
+    let averageSpeechRate = totalSpeechRate / files?.length;
+    averageSpeechRate = parseFloat(averageSpeechRate.toFixed(2)); // Round to two decimal places
+    console.log(`Calculated average Speech rate : ${averageSpeechRate}`)
 
     if (isNaN(averageSpeechRate)) {
       return res.status(HttpStatus.BAD_REQUEST).json({
