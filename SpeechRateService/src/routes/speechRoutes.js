@@ -5,11 +5,16 @@
 //Requires
 const express = require('express')
 const router = express.Router()
-const { updateSpeechRate, deleteSpeechRate, getSpeechRate} = require('../services/speechService')
+const { updateSpeechRate, deleteSpeechRate, getSpeechRate, getSpeechAudio} = require('../services/speechService')
 
 // Get speech rate of a user
 router.get('/:id', async (req, res) => {
   await getSpeechRate(req, res)
+})
+
+// Get speech rate of a user
+router.post('/tts', async (req, res) => {
+  await getSpeechAudio(req, res)
 })
 
 
