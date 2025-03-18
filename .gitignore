@@ -52,3 +52,4 @@ venv/*
 # source venv/bin/activate  
 #source /Users/isharakankanamge/Downloads/virtual-environment/myproject-env/bin/activate
 
+SpeechRateService/config/real-time-chat-bot-a5df65d73923.json

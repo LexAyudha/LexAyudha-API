@@ -6,6 +6,21 @@ const path = require('path');
 const os = require('os');
 const axios = require('axios');
 const HttpStatus = require('../enums/httpStatus');
+const textToSpeech = require('@google-cloud/text-to-speech');
+const util = require('util')
+
+
+// Set the GOOGLE_APPLICATION_CREDENTIALS environment variable
+try {
+  const serviceAccountPath = path.join(__dirname, '../../config/real-time-chat-bot-a5df65d73923.json');
+  if (!fs.existsSync(serviceAccountPath)) {
+    throw new Error(`Service account key file not found at path: ${serviceAccountPath}`);
+  }
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountPath;
+} catch (error) {
+  console.error(error.message);
+  process.exit(1); // Exit the process with an error code
+}
 
 // Configure multer for file uploads
 const upload = multer({ storage: multer.memoryStorage() });
@@ -51,10 +66,10 @@ exports.getSpeechRate = async (req, res) => {
 }
 
 exports.processSpeechRate = async (req, res) => {
-  
+
   const userId = req?.params?.id;
   const files = req?.files;
-  
+
   if (!files || files?.length === 0) {
     return res.status(HttpStatus.BAD_REQUEST).json({ message: 'No speech files uploaded' });
   }
@@ -72,7 +87,7 @@ exports.processSpeechRate = async (req, res) => {
 
       const formData = new FormData();
 
-      formData.append('file', fs.readFileSync(tempFilePath),{
+      formData.append('file', fs.readFileSync(tempFilePath), {
         filename: file.originalname,
         contentType: file.mimetype,
         knownLength: file.size
@@ -93,7 +108,7 @@ exports.processSpeechRate = async (req, res) => {
       console.log(`Speech prediction for ${file?.originalname}: ${flaskResponse?.data?.prediction}`)
       totalSpeechRate += flaskResponse?.data?.prediction;
     }
-    
+
     let averageSpeechRate = totalSpeechRate / files?.length;
     averageSpeechRate = parseFloat(averageSpeechRate.toFixed(2)); // Round to two decimal places
     console.log(`Calculated average Speech rate : ${averageSpeechRate}`)
@@ -113,6 +128,45 @@ exports.processSpeechRate = async (req, res) => {
     }
 
     res.status(HttpStatus.OK).json({ message: 'Speech rate processed and updated successfully', averageSpeechRate });
+  } catch (error) {
+    console.error(error);
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
+  }
+};
+
+exports.getSpeechAudio = async (req, res) => {
+  const payload = req?.body;
+
+  const client = new textToSpeech.TextToSpeechClient();
+
+  const writeFileSync = util.promisify(fs.writeFile);
+
+  const fileName = `audio-${Math.floor(Math.random() * 20)}.mp3`;
+  const outputPath = path.join('./public', fileName);
+
+  const request = {
+    input: { text: payload?.text },
+    // Select the language and SSML voice gender (optional)
+    voice: { languageCode: payload?.langCode || 'en-US', name: "en-US-Chirp3-HD-Kore" },
+    // select the type of audio encoding
+    audioConfig: { audioEncoding: 'MP3', speakingRate: payload?.speechRate || 1 },
+  };
+
+  try {
+    // Performs the text-to-speech request
+    const [response] = await client.synthesizeSpeech(request);
+    await writeFileSync(outputPath, response?.audioContent, "binary");
+
+    // Send the audio file as a response
+    res.sendFile(path.resolve(outputPath), (err) => {
+      if (err) {
+        console.error(err);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Failed to send audio file' });
+      } else {
+        // Clean up the audio file after sending it
+        fs.unlinkSync(outputPath);
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
