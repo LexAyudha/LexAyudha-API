@@ -20,5 +20,4 @@ export const authenticateRequest = async (req, res, next) => {
     console.error(error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
-
 };

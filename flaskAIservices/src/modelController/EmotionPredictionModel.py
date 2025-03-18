@@ -6,9 +6,8 @@ import pymongo
 
 # Set environment variable to minimize TensorFlow logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 # MongoDB client setup
-client = pymongo.MongoClient("mongodb+srv://lexayudha:lex123@cluster0.pvr0d.mongodb.net/lexayudha?retryWrites=true&w=majority")
+client = pymongo.MongoClient('mongodb+srv://falcon:UM0S1YXk4ZOvulwi@lexayudhacluster.9ufym.mongodb.net/LexAyudhaDB?retryWrites=true&w=majority&appName=LexAyudhaCluster')
 db = client["EmotionDataDB"]
 collection = db["history"]
 
