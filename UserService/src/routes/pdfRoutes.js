@@ -40,7 +40,7 @@ const parsePdf = async (req, res, next) => {
     }
 };
 
-// Route to handle PDF upload and text extraction
+// Route to handle PDF upload and text extraction for the dyslexic component
 router.post('/', upload.single('pdf'), parsePdf, (req, res) => {
     res.json({ text: req.pdfText });
 });
