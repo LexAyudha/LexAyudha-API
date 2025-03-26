@@ -458,7 +458,7 @@ exports.getGeneratedSentences = async (req, res) => {
 
         console.log(`Generation completed with ${errorCount} errors`);
         
-        // If no lessons were generated or too many errors, use fallback
+        // If no lessons were generated or too many errors, use fallback lessons
         if (errorCount > 3 || lessonList.length === 0) {
             console.log('Using fallback lesson list due to errors');
             lessonList = fallbackLessonList;
