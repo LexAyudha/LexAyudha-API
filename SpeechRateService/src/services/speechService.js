@@ -141,8 +141,14 @@ exports.getSpeechAudio = async (req, res) => {
 
   const writeFileSync = util.promisify(fs.writeFile);
 
+  const publicDir = './public'; // Define the directory
   const fileName = `audio-${Math.floor(Math.random() * 20)}.mp3`;
-  const outputPath = path.join('./public', fileName);
+  const outputPath = path.join(publicDir, fileName);
+
+  // Ensure the directory exists
+  if (!fs.existsSync(publicDir)) {
+    fs.mkdirSync(publicDir, { recursive: true });
+  }
 
   const request = {
     input: { text: payload?.text },
