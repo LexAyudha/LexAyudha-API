@@ -4,7 +4,7 @@ from threading import Lock
 import queue
 import logging
 
-# Initialize request queue and lock
+# Initialize request queue and lock for resource handling
 request_queue = queue.Queue(maxsize=10)  # Limit concurrent requests
 model_lock = Lock()  # Ensure model access is thread-safe
 logger = logging.getLogger(__name__)
