@@ -1,9 +1,10 @@
 const amqp = require('amqplib');
+require('dotenv').config();
 
-const RABBITMQ_URL = 'amqps://glihggkl:qxlDfpqYIOGAekx5QWWAjXtE_YLjSUze@toucan.lmq.cloudamqp.com/glihggkl'; // Update if using a cloud provider
+const RABBITMQ_URL = process.env.RABBITMQ_URL // Update if using a cloud provider
 const QUEUE_NAME = 'critical_errors';
 
-async function publishErrorEvent(errorMessage) {
+async function publishErrorEvent(errorFunc,errorMessage) {
   try {
     // Connect to RabbitMQ
     const connection = await amqp.connect(RABBITMQ_URL);
@@ -17,6 +18,7 @@ async function publishErrorEvent(errorMessage) {
       event: 'critical_error',
       payload: {
         error_message: errorMessage,
+        error_function: errorFunc,
         service: 'SpeechRateService',
         timestamp: new Date().toISOString(),
       },

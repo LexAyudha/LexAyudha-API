@@ -8,7 +8,7 @@ const axios = require('axios');
 const HttpStatus = require('../enums/httpStatus');
 const textToSpeech = require('@google-cloud/text-to-speech');
 const util = require('util')
-
+const { publishErrorEvent  } = require('../../config/eventBroker')
 
 // Set the GOOGLE_APPLICATION_CREDENTIALS environment variable
 try {
@@ -18,6 +18,7 @@ try {
   }
   process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountPath;
 } catch (error) {
+  await publishErrorEvent('Google API Credential setting',error?.message);
   console.error(error.message);
   process.exit(1); // Exit the process with an error code
 }
@@ -129,6 +130,7 @@ exports.processSpeechRate = async (req, res) => {
 
     res.status(HttpStatus.OK).json({ message: 'Speech rate processed and updated successfully', averageSpeechRate });
   } catch (error) {
+    await publishErrorEvent('processSpeechRate',error?.message);
     console.error(error);
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
@@ -174,6 +176,7 @@ exports.getSpeechAudio = async (req, res) => {
       }
     });
   } catch (error) {
+    await publishErrorEvent('getSpeechAudio',error?.message);
     console.error(error);
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }

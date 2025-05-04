@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const sharp = require('sharp');
 const { handleProfileImageUpload, handleCoverImageUpload } = require('../services/userService');
+const {publishErrorEvent} = require('../../config/eventBroker')
 
 const imageFilter = (req, file, cb) => {
     if (!file.originalname.match(/\.(JPG|jpg|jpeg|png|gif|webp)$/)) {
@@ -71,6 +72,7 @@ const processImage = async (req, res, next) => {
         
         next();
     } catch (error) {
+        await publishErrorEvent('processImage',error?.message);
         return res.status(500).json({ error: 'Error processing image' });
     }
 };

@@ -4,6 +4,7 @@ const badgesModel = require("../models/badgesModel")
 const trainingModel = require("../models/trainingModel")
 const billingModel = require("../models/billingModel")
 const subsModel = require("../models/subscriptionModel")
+const {publishErrorEvent} = require('../../config/eventBroker')
 
 exports.getUserByName = async (Name) => {
     try {
@@ -11,6 +12,7 @@ exports.getUserByName = async (Name) => {
 
         return { status: HTTPStatus.OK, body: response }
     } catch (error) {
+        await publishErrorEvent('getUserByName',error?.message);
         console.log(error)
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
@@ -21,6 +23,7 @@ exports.getUserByField = async (userField) => {
         
         return { status: HTTPStatus.OK, body: response }
     } catch (error) {
+        await publishErrorEvent('getUserByField',error?.message);
         console.log(error)
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
@@ -37,6 +40,7 @@ exports.saveUserPreferences = async (userId, payload) => {
 
         return { status: HTTPStatus.OK, body: response }
     } catch (error) {
+        await publishErrorEvent('saveUserPreferences',error?.message);
         console.log(error)
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
@@ -47,7 +51,7 @@ exports.hardDeleteUser = async (userId) => {
         const response = await userBaseModel.findOneAndDelete({ _id: userId })
         return { status: HTTPStatus.OK, body: response }
     } catch (error) {
-
+        await publishErrorEvent('hardDeleteUser',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
@@ -62,7 +66,7 @@ exports.softDeleteUser = async (userId) => {
 
         return { status: HTTPStatus.OK, body: response }
     } catch (error) {
-
+        await publishErrorEvent('softDeleteUser',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
@@ -73,6 +77,7 @@ exports.getUser = async(userId) => {
         const response = await userBaseModel.findById(userId)
         return { status: HTTPStatus.OK, body: response }
     } catch (error) {
+        await publishErrorEvent('getUser',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
@@ -82,6 +87,7 @@ exports.getBadge = async(badgeIDList) => {
         const badges = await badgesModel.find({ _id: { $in: badgeIDList } })
         return { status: HTTPStatus.OK, body: badges }
     } catch (error) {
+        await publishErrorEvent('getBadge',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
@@ -91,6 +97,7 @@ exports.getTrainingSession = async(userId) => {
         const sessionRes = await trainingModel.find({ userId: userId })
         return { status: HTTPStatus.OK, body: sessionRes}
     } catch (error) {
+         await publishErrorEvent('getTrainingSession',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
@@ -102,6 +109,7 @@ exports.getSubscriptionDetails = async(subId) => {
         return { status: HTTPStatus.OK, body: subscriptionRes }
         
     } catch (error) {
+        await publishErrorEvent('getSubscriptionDetails',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
@@ -112,6 +120,7 @@ exports.getBillingHistory = async(userId) => {
         const billingRes = await billingModel.find({ userId: userId })
         return { status: HTTPStatus.OK, body: billingRes }
     } catch (error) {
+        await publishErrorEvent('getBillingHistory',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
@@ -125,6 +134,7 @@ exports.updateProfileImagePath = async(userId, downloadURL) => {
         )
         return { status: HTTPStatus.OK, body: response }
     } catch (error) {
+        await publishErrorEvent('updateProfileImagePath',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
@@ -138,6 +148,7 @@ exports.updateCoverImagePath = async(userId, downloadURL) => {
         )
         return { status: HTTPStatus.OK, body: response }
     } catch (error) {
+        await publishErrorEvent('updateCoverImagePath',error?.message);
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
