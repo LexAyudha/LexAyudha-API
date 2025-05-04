@@ -18,5 +18,5 @@ const server = http.createServer(app)
 //Server then  listen to the port (8002)
 server.listen(port, () => {
    
-    console.log(`SpeechRate Server is running on port ${port}`)
+    console.log(`EmailService Server is running on port ${port}`)
 })

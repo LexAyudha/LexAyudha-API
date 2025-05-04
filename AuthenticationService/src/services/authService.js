@@ -27,7 +27,7 @@ exports.register = async (req, res) => {
       {
         $or: [
           { userName: payload?.userName },
-          { email: payload?.email }
+          
         ]
       },
       { isActive: true }

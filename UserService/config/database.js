@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
+const { publishErrorEvent } = require("./eventBroker.js");
 
 const connectDB = async () => {
   try {
