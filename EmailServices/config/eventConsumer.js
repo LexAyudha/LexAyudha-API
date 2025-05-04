@@ -1,8 +1,8 @@
 const amqp = require('amqplib');
 const {sendEmail} = require('../src/services/sendGridService')
+require('dotenv').config();
 
-
-const RABBITMQ_URL = 'amqps://glihggkl:qxlDfpqYIOGAekx5QWWAjXtE_YLjSUze@toucan.lmq.cloudamqp.com/glihggkl'; // Update if using a cloud provider
+const RABBITMQ_URL = process.env.RABBITMQ_URL
 const QUEUE_NAME = 'critical_errors';
 
 const sendEmailController = async(errorMessage, service, timestamp) => {

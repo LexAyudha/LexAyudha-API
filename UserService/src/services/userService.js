@@ -2,6 +2,7 @@ const { saveUserPreferences, softDeleteUser, getUser, updateProfileImagePath, up
 const HttpStatus = require('../enums/httpStatus')
 const { fireBaseStorage } = require('../../config/firebase')
 const { ref, uploadBytes, getDownloadURL } = require("firebase/storage")
+const { publishErrorEvent } = require('../../config/eventBroker')
 
 exports.updateUser = async (req, res) => {
     
@@ -123,6 +124,7 @@ exports.handleProfileImageUpload = async (req, res) => {
         res.status(response.status).json(response.body);
 
     } catch (error) {
+        await publishErrorEvent('handleProfileImageUpload',error?.message);
         console.error("Error uploading file:", error);
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
     }
@@ -154,6 +156,7 @@ exports.handleCoverImageUpload = async (req, res) => {
         res.status(response.status).json(response.body);
 
     } catch (error) {
+        await publishErrorEvent('handleCoverImageUpload',error?.message);
         console.error("Error uploading file:", error);
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
     }
