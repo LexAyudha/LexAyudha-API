@@ -1,7 +1,6 @@
 const logModel = require("../models/logModel");
 const HttpStatus = require("../enums/httpStatus");
-const { Logger } = require("winston");
-const { default: mailService } = require("../../config/nodeMailerConfig");
+const { logger } = require("../../config/logConfig");
 const { publishErrorEvent } = require("../../config/eventBroker");
 
 exports.insertLog = async(req,res) => {
@@ -18,7 +17,6 @@ exports.insertLog = async(req,res) => {
     return { status: HttpStatus.OK, body: response };
   } catch (error) {
     await publishErrorEvent('insertLog',error?.message);
-    Logger.error('at insertLog(): ',error);
     return { status: HttpStatus.INTERNAL_SERVER_ERROR, body: error };
   }
 }
@@ -30,7 +28,6 @@ exports.deleteLogFromDB = async(req,res) => {
     return { status: HttpStatus.OK, body: response };
   } catch (error) {
     await publishErrorEvent('deleteLogFromDB',error?.message);
-    Logger.error('at deleteLogFromDB(): ',error);
     return { status: HttpStatus.INTERNAL_SERVER_ERROR, body: error };
   }
 }
@@ -41,7 +38,6 @@ exports.getALog = async(req,res) => {
     return { status: HttpStatus.OK, body: response };
   } catch (error) {
     await publishErrorEvent('getALog',error?.message);
-    Logger.error('at getALog(): ',error);
     return { status: HttpStatus.INTERNAL_SERVER_ERROR, body: error };
   }
 }
@@ -52,7 +48,6 @@ exports.getAllLogsInDB = async(req,res) => {
     return { status: HttpStatus.OK, body: response };
   } catch (error) {
     await publishErrorEvent('getAllLogsInDB',error?.message);
-    Logger.error('at getAllLogsInDB(): ',error);
     return { status: HttpStatus.INTERNAL_SERVER_ERROR, body:error};
   }
 }
@@ -64,7 +59,6 @@ exports.getLogsFiltered = async(req,res) => {
     return { status: HttpStatus.OK, body: response };
   } catch (error) {
     await publishErrorEvent('getLogsFiltered',error?.message);
-    Logger.error('at getLogsFiltered(): ',error);
     return { status: HttpStatus.INTERNAL_SERVER_ERROR, body: error };
   }
 }
