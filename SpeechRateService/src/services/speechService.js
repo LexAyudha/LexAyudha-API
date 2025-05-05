@@ -18,9 +18,15 @@ try {
   }
   process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountPath;
 } catch (error) {
-  await publishErrorEvent('Google API Credential setting',error?.message);
+  handleGoogleCredentialsError(error);
   console.error(error.message);
-  process.exit(1); // Exit the process with an error code
+  process.exit(1); 
+}
+
+const handleGoogleCredentialsError = async(error) => {
+  console.error('Error with Google credentials:', error.message);
+  await publishErrorEvent('handleGoogleCredentialsError',error?.message);
+  process.exit(1); 
 }
 
 // Configure multer for file uploads
