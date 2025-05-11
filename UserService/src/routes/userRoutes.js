@@ -7,6 +7,10 @@ const express = require('express')
 const router = express.Router()
 const { updateUser, deleteUser, getUserById, getUserAllDetails, getUsersList } = require('../services/userService')
 
+//healthCheck route
+router.get('/healthCheck', (req, res) => {
+  res.status(200).json({ message: 'User Service is running' })
+})
 
 router.get('/:id', async(req,res) => {
   await getUserById(req,res)

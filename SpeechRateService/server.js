@@ -15,7 +15,7 @@ const port = process.env.PORT
 //Creates HTTP server
 const server = http.createServer(app)
 
-//Server then  listen to the port (8002)
+//Server then  listen to the port (8003)
 server.listen(port, () => {
    
     console.log(`SpeechRate Server is running on port ${port}`)

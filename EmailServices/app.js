@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/database");
 const emailRoutes = require("./src/routes/emailRoutes");
+const utilRoutes = require("./src/routes/utilRoutes");
 const {consumeEvents} = require('./config/eventConsumer')
 
 connectDB();
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 //routes here
+app.use('/', utilRoutes)
 app.use("/email", emailRoutes);
 
 //Start consuming events from the event broker

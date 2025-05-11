@@ -14,7 +14,7 @@ const port = process.env.PORT
 //Creates HTTP server
 const server = http.createServer(app)
 
-//Server then  listen to the port (8002)
+//Server then  listen to the port (8008)
 server.listen(port, () => {
    
     console.log(`System Log Server is running on port ${port}`)
