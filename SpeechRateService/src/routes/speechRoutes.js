@@ -7,6 +7,11 @@ const express = require('express')
 const router = express.Router()
 const { updateSpeechRate, deleteSpeechRate, getSpeechRate, getSpeechAudio} = require('../services/speechService')
 
+//healthCheck route
+router.get('/healthCheck', (req, res) => {
+  res.status(200).json({ message: 'Speech Rate Service is running' })
+})
+
 // Get speech rate of a user
 router.get('/:id', async (req, res) => {
   await getSpeechRate(req, res)

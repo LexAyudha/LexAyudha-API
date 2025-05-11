@@ -12,7 +12,7 @@ const port = process.env.PORT;
 //Creates HTTP server
 const server = http.createServer(app);
 
-//Server then  listen to the port (4000)
+//Server then  listen to the port (8001)
 server.listen(port, () => {
   console.log(`Authentication Server is running on port ${port} 🔥`);
 });

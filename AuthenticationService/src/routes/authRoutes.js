@@ -25,5 +25,9 @@ router.get('/', async(req,res) => {
   generateNewAccessToken(req,res)
 })
 
+router.get('/healthCheck', (req, res) => {
+  res.status(200).json({ message: "Authentication Service is running" });
+});
+
 //Exporting router to be used by the app.js
 module.exports = router;
