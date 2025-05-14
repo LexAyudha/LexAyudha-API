@@ -6,6 +6,12 @@ from src.modelController.EmotionPredictionModel import calculate_emotion_percent
 from datetime import datetime, timedelta
 import pymongo
 from bson import ObjectId
+import google.generativeai as genai
+import json
+
+# Configure Gemini API
+GOOGLE_API_KEY = "AIzaSyCtXOk4Qs3a3L1oOh_5yJbXgz_52r14P_g"  # Replace with your actual API key
+genai.configure(api_key=GOOGLE_API_KEY)
 
 # MongoDB client setup
 client = pymongo.MongoClient('mongodb+srv://falcon:UM0S1YXk4ZOvulwi@lexayudhacluster.9ufym.mongodb.net/LexAyudhaDB?retryWrites=true&w=majority&appName=LexAyudhaCluster')
@@ -22,6 +28,41 @@ def convert_to_serializable(obj):
     elif isinstance(obj, list):
         return [convert_to_serializable(item) for item in obj]
     return obj
+
+def generate_student_summary(analytics_data):
+    try:
+        # Prepare the prompt for Gemini
+        prompt = f"""
+        Analyze this student's emotion data and provide a concise summary of their progress and areas for improvement:
+        
+        Activity: {analytics_data.get('activity_name', 'Unknown')}
+        Total Sessions: {analytics_data['allTimeData']['total']}
+        
+        Emotion Distribution:
+        {json.dumps(analytics_data['allTimeData']['emotions'], indent=2)}
+        
+        Emotion Class Distribution:
+        - Engagement: {analytics_data['allTimeData']['engagement']}%
+        - Frustration: {analytics_data['allTimeData']['frustration']}%
+        - Distraction: {analytics_data['allTimeData']['distraction']}%
+        
+        Daily Trend: {json.dumps(analytics_data['allTimeData']['dailyTrend'], indent=2)}
+        
+        Please provide:
+        1. A brief summary of the student's emotional engagement
+        2. Key areas of improvement
+        3. Recommendations for better engagement
+        Keep the response concise and focused on actionable insights.
+        """
+
+        # Generate response using Gemini
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(prompt)
+        
+        return response.text
+    except Exception as e:
+        print(f"Error generating summary: {str(e)}")
+        return "Unable to generate summary at this time."
 
 def get_emotion_prediction():
     try:
@@ -138,6 +179,9 @@ def get_activity_analytics():
                 elif emotion in ["surprise", "disgust"]:
                     all_time_percentages["distraction"] += percentage
 
+        # Round all percentages to 2 decimal places
+        all_time_percentages = {k: round(v, 2) for k, v in all_time_percentages.items()}
+
         # Calculate daily trend for all-time data
         daily_trend = {}
         for entry in all_time_entries:
@@ -160,10 +204,21 @@ def get_activity_analytics():
         # Convert MongoDB documents to JSON-serializable format
         serialized_entries = convert_to_serializable(entries)
         
+        # Prepare data for summary generation
+        summary_data = {
+            "activity_name": "Number Recognition",  # You might want to fetch this from your database
+            "allTimeData": all_time_data,
+            "dailyData": serialized_entries
+        }
+        
+        # Generate summary using Gemini
+        student_summary = generate_student_summary(summary_data)
+        
         response_data = {
             "hourlyData": [],  # Keep this for backward compatibility
             "allTimeData": all_time_data,
-            "dailyData": serialized_entries
+            "dailyData": serialized_entries,
+            "studentSummary": student_summary
         }
         print(f"Returning response: {response_data}")
         return jsonify(response_data), 200
