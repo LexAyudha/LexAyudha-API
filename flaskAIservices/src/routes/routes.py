@@ -21,7 +21,7 @@ def predict():
 def emotion_predict():
     return get_emotion_prediction()
 
-@emotion_detection_route.route('/analytics', methods=['GET'])
+@emotion_detection_route.route("/analytics", methods=["GET"])
 def analytics():
     return get_activity_analytics()
 

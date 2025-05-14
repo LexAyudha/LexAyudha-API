@@ -5,11 +5,23 @@ from src.services.EmotionDetectionService import make_emotion_prediction
 from src.modelController.EmotionPredictionModel import calculate_emotion_percentages
 from datetime import datetime, timedelta
 import pymongo
+from bson import ObjectId
 
 # MongoDB client setup
 client = pymongo.MongoClient('mongodb+srv://falcon:UM0S1YXk4ZOvulwi@lexayudhacluster.9ufym.mongodb.net/LexAyudhaDB?retryWrites=true&w=majority&appName=LexAyudhaCluster')
 db = client["EmotionDataDB"]
 collection = db["history"]
+
+def convert_to_serializable(obj):
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    elif isinstance(obj, datetime):
+        return obj.strftime("%Y-%m-%d %H:%M:%S")
+    elif isinstance(obj, dict):
+        return {key: convert_to_serializable(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_serializable(item) for item in obj]
+    return obj
 
 def get_emotion_prediction():
     try:
@@ -67,7 +79,10 @@ def get_activity_analytics():
         activity_id = request.args.get('activityId')
         student_id = request.args.get('studentId')
 
+        print(f"Received request with params: date={date}, activityId={activity_id}, studentId={student_id}")
+
         if not all([date, activity_id, student_id]):
+            print("Missing required parameters")
             return jsonify({"error": "Date, activity ID, and student ID are required"}), 400
 
         # Convert date string to datetime
@@ -84,8 +99,11 @@ def get_activity_analytics():
             }
         }
 
+        print(f"MongoDB query: {query}")
+
         # Get all entries for the selected date
         entries = list(collection.find(query).sort("TimeStamp", 1))
+        print(f"Found {len(entries)} entries")
 
         # Calculate hourly averages
         hourly_data = {}
@@ -110,15 +128,22 @@ def get_activity_analytics():
             "ActivityId": activity_id
         }
         all_time_entries = list(collection.find(all_time_query).sort("TimeStamp", 1))
+        print(f"Found {len(all_time_entries)} all-time entries")
 
         # Calculate all-time averages
         all_time_percentages = calculate_emotion_percentages(student_id, len(all_time_entries))
 
-        return jsonify({
+        # Convert MongoDB documents to JSON-serializable format
+        serialized_entries = convert_to_serializable(entries)
+        
+        response_data = {
             "hourlyData": hourly_averages,
             "allTimeData": all_time_percentages,
-            "dailyData": entries
-        }), 200
+            "dailyData": serialized_entries
+        }
+        print(f"Returning response: {response_data}")
+        return jsonify(response_data), 200
 
     except Exception as e:
+        print(f"Error in get_activity_analytics: {str(e)}")
         return jsonify({"error": str(e)}), 500
