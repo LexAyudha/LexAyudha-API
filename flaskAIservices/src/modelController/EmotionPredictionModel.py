@@ -162,13 +162,13 @@ def predict_with_model(img_path, student_id, activity_id):
 
 # You can now directly call this method to make predictions
 # Example usage:
-student_id = "123456"
-activity_id = "232455"
-img_path = "temp.jpg"  # Path to the image file
+# student_id = "123456"
+# activity_id = "232455"
+# img_path = "temp.jpg"  # Path to the image file
 
-emotion = predict_with_model(img_path, student_id, activity_id)
+# emotion = predict_with_model(img_path, student_id, activity_id)
 
-if emotion:
-    print(f"Emotion predicted: {emotion}")
-else:
-    print("Emotion prediction failed.")
+# if emotion:
+#     print(f"Emotion predicted: {emotion}")
+# else:
+#     print("Emotion prediction failed.")
