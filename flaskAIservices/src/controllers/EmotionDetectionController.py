@@ -56,7 +56,7 @@ def generate_student_summary(analytics_data):
         """
 
         # Generate response using Gemini
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         response = model.generate_content(prompt)
         
         return response.text
