@@ -13,8 +13,8 @@ collection = db["history"]
 
 # Basic emotion categories
 FRUSTRATION_EMOTIONS = ["anger", "sad"]
-DISTRACTION_EMOTIONS = ["surprise"]  # Removed neutral from here
-ENGAGEMENT_EMOTIONS = ["happy"]      # Neutral will be handled separately
+DISTRACTION_EMOTIONS = ["surprise"]  
+ENGAGEMENT_EMOTIONS = ["happy"]   
 
 def calculate_emotion_percentages(student_id, time_window=20):
     """
@@ -37,9 +37,8 @@ def calculate_emotion_percentages(student_id, time_window=20):
         
         # Count consecutive neutral states
         consecutive_neutral = 0
-        neutral_threshold = 3  # Consider extended neutral as distraction after this many consecutive readings
+        neutral_threshold = 3 
         
-        # Check if there's a happy emotion just before or after a neutral
         for i, entry in enumerate(emotion_entries):
             emotion = entry["Emotion"]
             
@@ -55,7 +54,6 @@ def calculate_emotion_percentages(student_id, time_window=20):
             if emotion == "neutral":
                 consecutive_neutral += 1
                 
-                # Check context of neutral emotion
                 has_nearby_happy = False
                 
                 # Look at nearby entries for context (up to 2 entries before and after)
@@ -66,10 +64,8 @@ def calculate_emotion_percentages(student_id, time_window=20):
                         break
                 
                 if consecutive_neutral >= neutral_threshold:
-                    # Extended neutral periods suggest distraction
                     counts["distraction"] += 0.7
                 elif has_nearby_happy:
-                    # Neutral emotions near happy ones suggest engagement
                     counts["engagement"] += 0.5
                 else:
                     # In other cases, neutral is slightly more likely to be engagement than distraction
