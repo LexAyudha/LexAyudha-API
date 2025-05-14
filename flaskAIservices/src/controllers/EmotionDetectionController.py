@@ -1,5 +1,3 @@
-
-
 from flask import request, jsonify
 import os
 import random
@@ -7,6 +5,13 @@ from src.services.EmotionDetectionService import make_emotion_prediction
 
 def get_emotion_prediction():
     try:
+        # Get student ID and activity ID from headers
+        student_id = request.headers.get('Student-Id')
+        activity_id = request.headers.get('Activity-Id')
+
+        if not student_id or not activity_id:
+            return jsonify({"error": "Student ID and Activity ID are required"}), 400
+
         # Check if a file is part of the request
         if "file" not in request.files:
             return jsonify({"error": "No file part in the request"}), 400
@@ -29,14 +34,13 @@ def get_emotion_prediction():
 
         # Define temporary file names
         temp_file_path = os.path.join(temp_dir, f"emo_temp_{random_number}.png")
-       
 
         # Save the uploaded audio file temporarily
         file.save(temp_file_path)
 
         try:
-            # Use the temporary file for prediction
-            result = make_emotion_prediction(temp_file_path,'343434','53545345')
+            # Use the temporary file for prediction with student and activity IDs
+            result = make_emotion_prediction(temp_file_path, student_id, activity_id)
 
             # Return prediction result
             return jsonify({"prediction": result}), 200
@@ -45,7 +49,6 @@ def get_emotion_prediction():
             # Clean up temporary files
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
-            
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
