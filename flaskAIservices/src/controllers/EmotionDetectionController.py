@@ -103,26 +103,9 @@ def get_activity_analytics():
 
         # Get all entries for the selected date
         entries = list(collection.find(query).sort("TimeStamp", 1))
-        print(f"Found {len(entries)} entries")
+        print(f"Found {len(entries)} entries for selected date")
 
-        # Calculate hourly averages
-        hourly_data = {}
-        for entry in entries:
-            hour = datetime.strptime(entry["TimeStamp"], "%Y-%m-%d %H:%M:%S").hour
-            if hour not in hourly_data:
-                hourly_data[hour] = []
-            hourly_data[hour].append(entry)
-
-        # Calculate averages for each hour
-        hourly_averages = []
-        for hour, entries in hourly_data.items():
-            percentages = calculate_emotion_percentages(student_id, len(entries))
-            hourly_averages.append({
-                "hour": hour,
-                "percentages": percentages
-            })
-
-        # Get all-time data for comparison
+        # Get all-time entries for the activity and student
         all_time_query = {
             "StudentId": student_id,
             "ActivityId": activity_id
@@ -130,15 +113,56 @@ def get_activity_analytics():
         all_time_entries = list(collection.find(all_time_query).sort("TimeStamp", 1))
         print(f"Found {len(all_time_entries)} all-time entries")
 
-        # Calculate all-time averages
-        all_time_percentages = calculate_emotion_percentages(student_id, len(all_time_entries))
+        # Calculate all-time emotion distribution
+        all_time_emotions = {}
+        for entry in all_time_entries:
+            emotion = entry["Emotion"]
+            all_time_emotions[emotion] = all_time_emotions.get(emotion, 0) + 1
+
+        # Calculate all-time emotion percentages
+        total_entries = len(all_time_entries)
+        all_time_percentages = {
+            "engagement": 0,
+            "frustration": 0,
+            "distraction": 0
+        }
+
+        if total_entries > 0:
+            # Calculate percentages based on emotion categories
+            for emotion, count in all_time_emotions.items():
+                percentage = (count / total_entries) * 100
+                if emotion in ["happy", "neutral"]:
+                    all_time_percentages["engagement"] += percentage
+                elif emotion in ["angry", "sad", "fear"]:
+                    all_time_percentages["frustration"] += percentage
+                elif emotion in ["surprise", "disgust"]:
+                    all_time_percentages["distraction"] += percentage
+
+        # Calculate daily trend for all-time data
+        daily_trend = {}
+        for entry in all_time_entries:
+            date = entry["TimeStamp"].split(" ")[0]
+            if date not in daily_trend:
+                daily_trend[date] = {}
+            emotion = entry["Emotion"]
+            daily_trend[date][emotion] = daily_trend[date].get(emotion, 0) + 1
+
+        # Prepare all-time data
+        all_time_data = {
+            "emotions": all_time_emotions,
+            "total": total_entries,
+            "engagement": all_time_percentages["engagement"],
+            "frustration": all_time_percentages["frustration"],
+            "distraction": all_time_percentages["distraction"],
+            "dailyTrend": daily_trend
+        }
 
         # Convert MongoDB documents to JSON-serializable format
         serialized_entries = convert_to_serializable(entries)
         
         response_data = {
-            "hourlyData": hourly_averages,
-            "allTimeData": all_time_percentages,
+            "hourlyData": [],  # Keep this for backward compatibility
+            "allTimeData": all_time_data,
             "dailyData": serialized_entries
         }
         print(f"Returning response: {response_data}")
