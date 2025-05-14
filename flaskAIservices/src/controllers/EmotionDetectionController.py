@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 import os
 import random
 from src.services.EmotionDetectionService import make_emotion_prediction
@@ -8,10 +8,24 @@ import pymongo
 from bson import ObjectId
 import google.generativeai as genai
 import json
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+import base64
+
+# Create blueprint
+emotion_detection_route = Blueprint("emotionDetectionRoute", __name__)
 
 # Configure Gemini API
 GOOGLE_API_KEY = "AIzaSyCtXOk4Qs3a3L1oOh_5yJbXgz_52r14P_g"  # Replace with your actual API key
 genai.configure(api_key=GOOGLE_API_KEY)
+
+# Email configuration
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SMTP_USERNAME = "lexayudha@gmail.com"  # Replace with your email
+SMTP_PASSWORD = "your_app_password"  # Replace with your app password
 
 # MongoDB client setup
 client = pymongo.MongoClient('mongodb+srv://falcon:UM0S1YXk4ZOvulwi@lexayudhacluster.9ufym.mongodb.net/LexAyudhaDB?retryWrites=true&w=majority&appName=LexAyudhaCluster')
@@ -245,4 +259,74 @@ def get_activity_analytics():
 
     except Exception as e:
         print(f"Error in get_activity_analytics: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+def send_email_report(recipient_email, report_data, pdf_data):
+    try:
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = SMTP_USERNAME
+        msg['To'] = recipient_email
+        msg['Subject'] = f"Student Emotion Analytics Report - {report_data['date']}"
+
+        # Add body
+        body = f"""
+        Dear User,
+
+        Please find attached the emotion analytics report for the student.
+        
+        Report Details:
+        - Date: {report_data['date']}
+        - Activity: {report_data['activity_name']}
+        - Total Sessions: {report_data['total_sessions']}
+        
+        Summary:
+        {report_data['summary']}
+        
+        Best regards,
+        LexAyudha Team
+        """
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Attach PDF
+        pdf_attachment = MIMEApplication(pdf_data, _subtype='pdf')
+        pdf_attachment.add_header('Content-Disposition', 'attachment', 
+                                filename=f"emotion-analytics-report-{report_data['date']}.pdf")
+        msg.attach(pdf_attachment)
+
+        # Send email
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USERNAME, SMTP_PASSWORD)
+            server.send_message(msg)
+
+        return True
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
+        return False
+
+@emotion_detection_route.route("/send-report", methods=["POST"])
+def send_report():
+    try:
+        data = request.json
+        recipient_email = data.get('email')
+        report_data = data.get('reportData')
+        pdf_base64 = data.get('pdfData')
+
+        if not all([recipient_email, report_data, pdf_base64]):
+            return jsonify({"error": "Missing required data"}), 400
+
+        # Decode base64 PDF data
+        pdf_data = base64.b64decode(pdf_base64.split(',')[1])
+
+        # Send email
+        success = send_email_report(recipient_email, report_data, pdf_data)
+
+        if success:
+            return jsonify({"message": "Report sent successfully"}), 200
+        else:
+            return jsonify({"error": "Failed to send report"}), 500
+
+    except Exception as e:
+        print(f"Error in send_report: {str(e)}")
         return jsonify({"error": str(e)}), 500

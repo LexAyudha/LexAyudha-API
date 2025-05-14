@@ -1,10 +1,14 @@
 from flask import Blueprint
 from src.controllers.SpeechPredictionController import get_prediction
-from src.controllers.EmotionDetectionController import get_emotion_prediction, get_activity_analytics
+from src.controllers.EmotionDetectionController import (
+    get_emotion_prediction,
+    get_activity_analytics,
+    send_report,
+    emotion_detection_route
+)
 
 #Define your routes blueprint here
 speach_prediction_route = Blueprint("speechPredictRoute", __name__)
-emotion_detection_route = Blueprint("emotionDetectionRoute", __name__)
 health_check_route = Blueprint("healthCheckRoute", __name__)
 
 # Health check route
@@ -24,5 +28,9 @@ def emotion_predict():
 @emotion_detection_route.route("/analytics", methods=["GET"])
 def analytics():
     return get_activity_analytics()
+
+@emotion_detection_route.route("/send-report", methods=["POST"])
+def send_report_route():
+    return send_report()
 
 #Add a new route
