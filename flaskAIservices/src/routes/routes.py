@@ -1,6 +1,6 @@
 from flask import Blueprint
 from src.controllers.SpeechPredictionController import get_prediction
-from src.controllers.EmotionDetectionController import get_emotion_prediction
+from src.controllers.EmotionDetectionController import get_emotion_prediction, get_activity_analytics
 
 #Define your routes blueprint here
 speach_prediction_route = Blueprint("speechPredictRoute", __name__)
@@ -21,6 +21,8 @@ def predict():
 def emotion_predict():
     return get_emotion_prediction()
 
-
+@emotion_detection_route.route('/analytics', methods=['GET'])
+def analytics():
+    return get_activity_analytics()
 
 #Add a new route

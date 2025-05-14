@@ -2,6 +2,14 @@ from flask import request, jsonify
 import os
 import random
 from src.services.EmotionDetectionService import make_emotion_prediction
+from src.modelController.EmotionPredictionModel import calculate_emotion_percentages
+from datetime import datetime, timedelta
+import pymongo
+
+# MongoDB client setup
+client = pymongo.MongoClient('mongodb+srv://falcon:UM0S1YXk4ZOvulwi@lexayudhacluster.9ufym.mongodb.net/LexAyudhaDB?retryWrites=true&w=majority&appName=LexAyudhaCluster')
+db = client["EmotionDataDB"]
+collection = db["history"]
 
 def get_emotion_prediction():
     try:
@@ -49,6 +57,68 @@ def get_emotion_prediction():
             # Clean up temporary files
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def get_activity_analytics():
+    try:
+        date = request.args.get('date')
+        activity_id = request.args.get('activityId')
+        student_id = request.args.get('studentId')
+
+        if not all([date, activity_id, student_id]):
+            return jsonify({"error": "Date, activity ID, and student ID are required"}), 400
+
+        # Convert date string to datetime
+        selected_date = datetime.strptime(date, '%Y-%m-%d')
+        next_day = selected_date + timedelta(days=1)
+
+        # Query for specific date and activity
+        query = {
+            "StudentId": student_id,
+            "ActivityId": activity_id,
+            "TimeStamp": {
+                "$gte": selected_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "$lt": next_day.strftime("%Y-%m-%d %H:%M:%S")
+            }
+        }
+
+        # Get all entries for the selected date
+        entries = list(collection.find(query).sort("TimeStamp", 1))
+
+        # Calculate hourly averages
+        hourly_data = {}
+        for entry in entries:
+            hour = datetime.strptime(entry["TimeStamp"], "%Y-%m-%d %H:%M:%S").hour
+            if hour not in hourly_data:
+                hourly_data[hour] = []
+            hourly_data[hour].append(entry)
+
+        # Calculate averages for each hour
+        hourly_averages = []
+        for hour, entries in hourly_data.items():
+            percentages = calculate_emotion_percentages(student_id, len(entries))
+            hourly_averages.append({
+                "hour": hour,
+                "percentages": percentages
+            })
+
+        # Get all-time data for comparison
+        all_time_query = {
+            "StudentId": student_id,
+            "ActivityId": activity_id
+        }
+        all_time_entries = list(collection.find(all_time_query).sort("TimeStamp", 1))
+
+        # Calculate all-time averages
+        all_time_percentages = calculate_emotion_percentages(student_id, len(all_time_entries))
+
+        return jsonify({
+            "hourlyData": hourly_averages,
+            "allTimeData": all_time_percentages,
+            "dailyData": entries
+        }), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
