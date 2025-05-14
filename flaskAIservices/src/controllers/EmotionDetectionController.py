@@ -154,6 +154,22 @@ def get_activity_analytics():
         all_time_entries = list(collection.find(all_time_query).sort("TimeStamp", 1))
         print(f"Found {len(all_time_entries)} all-time entries")
 
+        # If no data is found, return early with empty data
+        if not all_time_entries:
+            return jsonify({
+                "hourlyData": [],
+                "allTimeData": {
+                    "emotions": {},
+                    "total": 0,
+                    "engagement": 0,
+                    "frustration": 0,
+                    "distraction": 0,
+                    "dailyTrend": {}
+                },
+                "dailyData": [],
+                "studentSummary": "No data available for analysis."
+            }), 200
+
         # Calculate all-time emotion distribution
         all_time_emotions = {}
         for entry in all_time_entries:
@@ -204,15 +220,19 @@ def get_activity_analytics():
         # Convert MongoDB documents to JSON-serializable format
         serialized_entries = convert_to_serializable(entries)
         
-        # Prepare data for summary generation
-        summary_data = {
-            "activity_name": "Number Recognition",  # You might want to fetch this from your database
-            "allTimeData": all_time_data,
-            "dailyData": serialized_entries
-        }
-        
-        # Generate summary using Gemini
-        student_summary = generate_student_summary(summary_data)
+        # Only generate summary if we have enough data
+        if total_entries > 0:
+            # Prepare data for summary generation
+            summary_data = {
+                "activity_name": "Number Recognition",  # You might want to fetch this from your database
+                "allTimeData": all_time_data,
+                "dailyData": serialized_entries
+            }
+            
+            # Generate summary using Gemini
+            student_summary = generate_student_summary(summary_data)
+        else:
+            student_summary = "No data available for analysis."
         
         response_data = {
             "hourlyData": [],  # Keep this for backward compatibility
