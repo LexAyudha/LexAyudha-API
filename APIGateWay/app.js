@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const proxy = require("express-http-proxy");
+//const { performHealthCheck } = require("./utilis/healthCheck");
 const { applyRateLimiter } = require("./utilis/rateLimiter");
 const app = express();
 app.use(cors());
