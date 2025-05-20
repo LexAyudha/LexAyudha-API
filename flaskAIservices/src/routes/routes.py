@@ -6,10 +6,12 @@ from src.controllers.EmotionDetectionController import (
     send_report,
     emotion_detection_route
 )
+from src.controllers.SentenceGenController import generate_sentences
 
 #Define your routes blueprint here
 speach_prediction_route = Blueprint("speechPredictRoute", __name__)
 health_check_route = Blueprint("healthCheckRoute", __name__)
+sentence_generation_route = Blueprint("sentenceGenRoute", __name__)
 
 # Health check route
 @health_check_route.route("/health", methods=["GET"])
@@ -32,5 +34,9 @@ def analytics():
 @emotion_detection_route.route("/send-report", methods=["POST"])
 def send_report_route():
     return send_report()
+
+@sentence_generation_route.route("/generate", methods=["GET"])
+def sentence_generation():
+    return generate_sentences()
 
 #Add a new route

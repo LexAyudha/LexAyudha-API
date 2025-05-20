@@ -33,16 +33,16 @@ coverage/
 *.log
 *.pid
 *.pyc
+*.cpython-312.pyc
 
-# PyTorch files
+# Model files
 *.pth
 *.h5
+model.safetensors
 
 # Ignore all __pycache__ directories
 **/__pycache__/
-flaskAIservices/src/routes/__pycache__
-flaskAIservices/src/services/__pycache__
-flaskAIservices/src/modelController/__pycache__
+
 
 # Media files
 *.wav
