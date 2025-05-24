@@ -109,12 +109,12 @@ jobs:
 
       - name: Push Docker Images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-gateway:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-auth:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-user:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-email:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-systemlog:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-speechrate:latest
+          docker push chillbroh98/lexayudha-gateway:latest
+          docker push chillbroh98/lexayudha-auth:latest
+          docker push chillbroh98/lexayudha-user:latest
+          docker push chillbroh98/lexayudha-email:latest
+          docker push chillbroh98/lexayudha-systemlog:latest
+          docker push chillbroh98/lexayudha-speechrate:latest
 
   deploy:
     needs: build
