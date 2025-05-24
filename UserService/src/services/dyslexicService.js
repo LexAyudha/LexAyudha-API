@@ -6,7 +6,7 @@ const cache = new NodeCache({ stdTTL: 18000 }); // TTL set to 5 hours in seconds
 const fallbackLessonList = [
   {
     id: '01',
-    name: 'lesson_1',
+    name: 'Lesson_1',
     complexity: 3,
     points: 30,
     description: 'Three-word sentences that are easy to follow.',
@@ -29,7 +29,7 @@ const fallbackLessonList = [
   },
   {
     id: '02',
-    name: 'lesson_2',
+    name: 'Lesson_2',
     complexity: 4,
     points: 40,
     description: 'Four-word sentences for building fluency.',
@@ -52,7 +52,7 @@ const fallbackLessonList = [
   },
   {
     id: '03',
-    name: 'lesson_3',
+    name: 'Lesson_3',
     complexity: 5,
     points: 50,
     description: 'Introducing five-word sentence structures.',
@@ -75,7 +75,7 @@ const fallbackLessonList = [
   },
   {
     id: '04',
-    name: 'lesson_4',
+    name: 'Lesson_4',
     complexity: 6,
     points: 60,
     description: 'Challenging six-word sentence patterns.',
@@ -98,7 +98,7 @@ const fallbackLessonList = [
   },
   {
     id: '05',
-    name: 'lesson_5',
+    name: 'Lesson_5',
     complexity: 7,
     points: 70,
     description: 'Seven-word sentences to enhance sentence structure.',
@@ -121,7 +121,7 @@ const fallbackLessonList = [
   },
   {
     id: '06',
-    name: 'lesson_6',
+    name: 'Lesson_6',
     complexity: 8,
     points: 80,
     description: 'Eight-word sentences that expand expression and clarity.',
@@ -144,7 +144,7 @@ const fallbackLessonList = [
   },
   {
     id: '07',
-    name: 'lesson_7',
+    name: 'Lesson_7',
     complexity: 9,
     points: 90,
     description: 'Nine-word sentences for practicing storytelling and pacing.',
@@ -167,7 +167,7 @@ const fallbackLessonList = [
   },
   {
     id: '08',
-    name: 'lesson_8',
+    name: 'Lesson_8',
     complexity: 10,
     points: 100,
     description: 'Ten-word sentences for fluency, memory, and confidence in speaking.',
@@ -190,6 +190,192 @@ const fallbackLessonList = [
   }
 ]
 
+const fallbackQuizList = [
+  {
+    id: '01',
+    name: 'Quiz_1',
+    complexity: 3,
+    points: 30,
+    description: 'Three-word sentences that are easy to follow.',
+    example: 'The dog barks.',
+    chromaticTheme: 'chromTheme_1',
+    colorTheme: 'chromThemeColor_1',
+    chapters: [
+      'The cat sleeps.',
+      'She runs fast.',
+      'Birds fly high.',
+      'He eats apples.',
+      'The sun sets.',
+      'Clouds move slowly.',
+      'Fish swim deep.',
+      'Wind blows strong.',
+      'Flowers bloom beautifully.',
+      'The dog jumps.',
+      'Rain falls gently.'
+    ]
+  },
+  {
+    id: '02',
+    name: 'Quiz_2',
+    complexity: 4,
+    points: 40,
+    description: 'Four-word sentences for building fluency.',
+    example: 'She quickly ran away.',
+    chromaticTheme: 'chromTheme_2',
+    colorTheme: 'chromThemeColor_1',
+    chapters: [
+      'The boy runs fast.',
+      'She drinks warm tea.',
+      'Clouds cover the sky.',
+      'They play outside happily.',
+      'The baby smiles brightly.',
+      'He reads a book.',
+      'Waves crash on rocks.',
+      'The sun rises early.',
+      'Leaves fall in autumn.',
+      'The dog barks loudly.',
+      'A cat sleeps peacefully.'
+    ]
+  },
+  {
+    id: '03',
+    name: 'Quiz_3',
+    complexity: 5,
+    points: 50,
+    description: 'Introducing five-word sentence structures.',
+    example: 'The flowers bloom in spring.',
+    chromaticTheme: 'chromTheme_3',
+    colorTheme: 'chromThemeColor_1',
+    chapters: [
+      'The bird sings every morning.',
+      'She walks to school daily.',
+      'The baby laughs so loudly.',
+      'Raindrops fall on the ground.',
+      'The wind blows very strong.',
+      'He quickly runs to work.',
+      'The car moves very fast.',
+      'They enjoy playing outside together.',
+      'Leaves turn red in autumn.',
+      'The sun sets behind mountains.',
+      'A dog chases the ball.'
+    ]
+  },
+  {
+    id: '04',
+    name: 'Quiz_4',
+    complexity: 6,
+    points: 60,
+    description: 'Challenging six-word sentence patterns.',
+    example: 'He carefully placed the books neatly.',
+    chromaticTheme: 'chromTheme_1',
+    colorTheme: 'chromThemeColor_1',
+    chapters: [
+      'She happily danced in the rain.',
+      'The birds chirped in the trees.',
+      'He quickly ran towards the bus.',
+      'A cat jumped onto the sofa.',
+      'Leaves rustled in the autumn wind.',
+      'The sun slowly disappeared behind clouds.',
+      'She read a book before bed.',
+      'The dog wagged its tail happily.',
+      'Children played joyfully in the park.',
+      'A train passed through the tunnel.',
+      'The waves crashed against the rocks.'
+    ]
+  },
+  {
+    id: '05',
+    name: 'Quiz_5',
+    complexity: 7,
+    points: 70,
+    description: 'Seven-word sentences to enhance sentence structure.',
+    example: 'The children laughed while playing outside.',
+    chromaticTheme: 'chromTheme_2',
+    colorTheme: 'chromThemeColor_1',
+    chapters: [
+      'The sun rose early in the morning.',
+      'She sang songs while cooking the meal.',
+      'The dog barked loudly at the stranger.',
+      'Rain poured heavily during the summer storm.',
+      'He wore a jacket because it rained.',
+      'The baby smiled while playing with toys.',
+      'Leaves fluttered gently in the cold breeze.',
+      'The train arrived late at the station.',
+      'He found a coin under the bed.',
+      'The teacher explained the lesson very clearly.',
+      'A cat slept peacefully on the couch.'
+    ]
+  },
+  {
+    id: '06',
+    name: 'Quiz_6',
+    complexity: 8,
+    points: 80,
+    description: 'Eight-word sentences that expand expression and clarity.',
+    example: 'The boy quickly ran through the tall grass.',
+    chromaticTheme: 'chromTheme_3',
+    colorTheme: 'chromThemeColor_1',
+    chapters: [
+      'The wind howled loudly during the cold night.',
+      'She painted a beautiful picture of the mountains.',
+      'The cat chased the mouse under the table.',
+      'Birds flew across the sky during the evening.',
+      'He packed his bag and left for school.',
+      'The dog followed the boy into the house.',
+      'Raindrops tapped lightly on the window all night.',
+      'They built a snowman together in the yard.',
+      'The baby slept soundly through the noisy storm.',
+      'The sun disappeared behind the tall grey buildings.',
+      'Mom baked a cake and shared it happily.'
+    ]
+  },
+  {
+    id: '07',
+    name: 'Quiz_7',
+    complexity: 9,
+    points: 90,
+    description: 'Nine-word sentences for practicing storytelling and pacing.',
+    example: 'She walked quietly through the forest with her dog.',
+    chromaticTheme: 'chromTheme_1',
+    colorTheme: 'chromThemeColor_1',
+    chapters: [
+      'The boy jumped over the puddle in the street.',
+      'He opened the book and started reading out loud.',
+      'The children gathered near the fire and told stories.',
+      'She carried the basket filled with red juicy apples.',
+      'They explored the cave with torches in their hands.',
+      'He found a kitten hiding behind the wooden door.',
+      'The stars twinkled brightly in the dark silent sky.',
+      'A balloon floated away over the hills and trees.',
+      'Grandma told us stories before we went to sleep.',
+      'They watched the fireworks burst above the big lake.',
+      'She ran home quickly when the thunderstorm started again.'
+    ]
+  },
+  {
+    id: '08',
+    name: 'Quiz_8',
+    complexity: 10,
+    points: 100,
+    description: 'Ten-word sentences for fluency, memory, and confidence in speaking.',
+    example: 'The children ran around the playground laughing and having fun.',
+    chromaticTheme: 'chromTheme_2',
+    colorTheme: 'chromThemeColor_1',
+    chapters: [
+      'He looked out the window and saw a rainbow forming.',
+      'The bird built a nest on top of the chimney.',
+      'She opened the box and found a surprise inside.',
+      'They sang songs together while walking through the field.',
+      'A puppy barked at the squirrel running up the tree.',
+      'The baby clapped hands when he saw his favorite toy.',
+      'Mom prepared sandwiches for the picnic in the sunny park.',
+      'The wind blew hard and scattered leaves everywhere around us.',
+      'They danced around the campfire until it was midnight.',
+      'He fixed his bike and rode around the neighborhood happily.',
+      'The stars appeared in the sky after the sun set.'
+    ]
+  }
+]
 
 exports.getGeneratedSentences = async (req, res) => {
     try {
@@ -201,9 +387,9 @@ exports.getGeneratedSentences = async (req, res) => {
         // Invalidates cache with logging
         if(invalidateCache){
             try {
-                console.log('Cache invalidation requested');
+                
                 cache.del('lessonList');
-                console.log('Cache successfully cleared');
+                
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
                 // Continue execution even if cache clear fails
@@ -310,7 +496,9 @@ exports.generateQuizeSentences = async (req, res) => {
     try {
         // Validate and sanitize input parameters
         const sentence_count = Math.min(Math.max(parseInt(req?.query?.sentence_count) || 10, 1), 20); // Min 1, Max 20
-        let quizCount = Math.min(Math.max(parseInt(req?.query?.quiz_count) || 10, 3), 10);
+        const baseQuizCount = Math.min(Math.max(parseInt(req?.query?.quiz_count) || 8, 3), 8); // Max 8 to allow for +2
+        const quizCount = baseQuizCount + 2; 
+        
         let errorCount = 0;
         
         // Construct lessonList - word length 3 to 10
@@ -318,10 +506,10 @@ exports.generateQuizeSentences = async (req, res) => {
         for (let i = 3; i <= quizCount; i++) {
             let lessonObject = {
                 id: i - 2,
-                name: `Lesson ${i - 2}`,
+                name: `Quiz ${i - 2}`,
                 description: `Introducing ${i} word sentence structures.`,
                 example: '',
-                complexity: i - 2,
+                complexity: i,
                 chromaticTheme: 'chromTheme_1',
                 colorTheme: 'chromThemeColor_1',
                 points: 10 * i,
@@ -365,7 +553,7 @@ exports.generateQuizeSentences = async (req, res) => {
         // If no lessons were generated or too many errors, use fallback
         if (errorCount > 3 || lessonList.length === 0) {
             console.log('Using fallback lesson list due to errors');
-            lessonList = fallbackLessonList;
+            lessonList = fallbackQuizList;
         }
 
 
@@ -376,7 +564,7 @@ exports.generateQuizeSentences = async (req, res) => {
         
         // Try to serve fallback content even in case of critical error
         try {
-            return res.status(200).json(fallbackLessonList);
+            return res.status(200).json(fallbackQuizList);
         } catch (fallbackError) {
             return res.status(500).json({ 
                 error: 'Internal server error',
