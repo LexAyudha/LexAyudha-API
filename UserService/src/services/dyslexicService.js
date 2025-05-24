@@ -24,7 +24,7 @@ const fallbackLessonList = [
       'Wind blows strong.',
       'Flowers bloom beautifully.',
       'The dog jumps.',
-      'Rain falls gently.'
+     
     ]
   },
   {
@@ -47,7 +47,7 @@ const fallbackLessonList = [
       'The sun rises early.',
       'Leaves fall in autumn.',
       'The dog barks loudly.',
-      'A cat sleeps peacefully.'
+     
     ]
   },
   {
@@ -70,7 +70,7 @@ const fallbackLessonList = [
       'They enjoy playing outside together.',
       'Leaves turn red in autumn.',
       'The sun sets behind mountains.',
-      'A dog chases the ball.'
+      
     ]
   },
   {
@@ -93,7 +93,7 @@ const fallbackLessonList = [
       'The dog wagged its tail happily.',
       'Children played joyfully in the park.',
       'A train passed through the tunnel.',
-      'The waves crashed against the rocks.'
+      
     ]
   },
   {
@@ -116,7 +116,7 @@ const fallbackLessonList = [
       'The train arrived late at the station.',
       'He found a coin under the bed.',
       'The teacher explained the lesson very clearly.',
-      'A cat slept peacefully on the couch.'
+      
     ]
   },
   {
@@ -139,7 +139,7 @@ const fallbackLessonList = [
       'They built a snowman together in the yard.',
       'The baby slept soundly through the noisy storm.',
       'The sun disappeared behind the tall grey buildings.',
-      'Mom baked a cake and shared it happily.'
+      
     ]
   },
   {
@@ -162,7 +162,7 @@ const fallbackLessonList = [
       'A balloon floated away over the hills and trees.',
       'Grandma told us stories before we went to sleep.',
       'They watched the fireworks burst above the big lake.',
-      'She ran home quickly when the thunderstorm started again.'
+      
     ]
   },
   {
@@ -185,7 +185,7 @@ const fallbackLessonList = [
       'The wind blew hard and scattered leaves everywhere around us.',
       'They danced around the campfire until it was midnight.',
       'He fixed his bike and rode around the neighborhood happily.',
-      'The stars appeared in the sky after the sun set.'
+      
     ]
   }
 ]
@@ -211,7 +211,7 @@ const fallbackQuizList = [
       'Wind blows strong.',
       'Flowers bloom beautifully.',
       'The dog jumps.',
-      'Rain falls gently.'
+      
     ]
   },
   {
@@ -234,7 +234,7 @@ const fallbackQuizList = [
       'The sun rises early.',
       'Leaves fall in autumn.',
       'The dog barks loudly.',
-      'A cat sleeps peacefully.'
+      
     ]
   },
   {
@@ -257,7 +257,7 @@ const fallbackQuizList = [
       'They enjoy playing outside together.',
       'Leaves turn red in autumn.',
       'The sun sets behind mountains.',
-      'A dog chases the ball.'
+      
     ]
   },
   {
@@ -280,7 +280,7 @@ const fallbackQuizList = [
       'The dog wagged its tail happily.',
       'Children played joyfully in the park.',
       'A train passed through the tunnel.',
-      'The waves crashed against the rocks.'
+      
     ]
   },
   {
@@ -303,7 +303,7 @@ const fallbackQuizList = [
       'The train arrived late at the station.',
       'He found a coin under the bed.',
       'The teacher explained the lesson very clearly.',
-      'A cat slept peacefully on the couch.'
+      
     ]
   },
   {
@@ -326,7 +326,7 @@ const fallbackQuizList = [
       'They built a snowman together in the yard.',
       'The baby slept soundly through the noisy storm.',
       'The sun disappeared behind the tall grey buildings.',
-      'Mom baked a cake and shared it happily.'
+      
     ]
   },
   {
@@ -349,7 +349,7 @@ const fallbackQuizList = [
       'A balloon floated away over the hills and trees.',
       'Grandma told us stories before we went to sleep.',
       'They watched the fireworks burst above the big lake.',
-      'She ran home quickly when the thunderstorm started again.'
+      
     ]
   },
   {
@@ -372,7 +372,7 @@ const fallbackQuizList = [
       'The wind blew hard and scattered leaves everywhere around us.',
       'They danced around the campfire until it was midnight.',
       'He fixed his bike and rode around the neighborhood happily.',
-      'The stars appeared in the sky after the sun set.'
+      
     ]
   }
 ]
