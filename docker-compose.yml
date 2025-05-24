@@ -26,11 +26,11 @@ services:
     ports:
       - "8006:8006"
 
-  flask:
-    container_name: flask
-    build: ./flaskAIservices
-    ports:
-      - "8005:8005"
+  # flask:
+  #   container_name: flask
+  #   build: ./flaskAIservices
+  #   ports:
+  #     - "8005:8005"
 
   email:
     container_name: email
@@ -49,4 +49,3 @@ services:
     build: ./SpeechRateService
     ports:
       - "8004:8004"
-      
