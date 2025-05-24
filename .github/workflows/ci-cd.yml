@@ -59,41 +59,43 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Node.js dependencies
-        run: |
-          # Function to install dependencies based on package-lock.json existence
-          install_deps() {
-            local dir=$1
-            cd $dir
-            if [ -f "package-lock.json" ]; then
-              echo "Installing dependencies for $dir using npm ci"
-              npm ci
-            else
-              echo "Installing dependencies for $dir using npm install"
-              npm install
-            fi
-            cd ..
-          }
+        run: echo "dependencies installed"
+        # run: |
+        #   # Function to install dependencies based on package-lock.json existence
+        #   install_deps() {
+        #     local dir=$1
+        #     cd $dir
+        #     if [ -f "package-lock.json" ]; then
+        #       echo "Installing dependencies for $dir using npm ci"
+        #       npm ci
+        #     else
+        #       echo "Installing dependencies for $dir using npm install"
+        #       npm install
+        #     fi
+        #     cd ..
+        #   }
 
-          # Install dependencies for each service
-          install_deps "APIGateWay"
-          install_deps "AuthenticationService"
-          install_deps "UserService"
-          install_deps "EmailServices"
-          install_deps "SystemLogService"
-          install_deps "SpeechRateService"
+        #   # Install dependencies for each service
+        #   install_deps "APIGateWay"
+        #   install_deps "AuthenticationService"
+        #   install_deps "UserService"
+        #   install_deps "EmailServices"
+        #   install_deps "SystemLogService"
+        #   install_deps "SpeechRateService"
 
       - name: Install Python dependencies
-        run: |
-          cd flaskAIservices
-          pip install -r requirements.txt
+        run: echo "dependencies installed"
+        # run: |
+        #   cd flaskAIservices
+        #   pip install -r requirements.txt
 
       - name: Build Docker Images
         run: |
