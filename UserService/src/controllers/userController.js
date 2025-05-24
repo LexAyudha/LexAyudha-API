@@ -6,6 +6,12 @@ const billingModel = require("../models/billingModel")
 const subsModel = require("../models/subscriptionModel")
 const {publishErrorEvent} = require('../../config/eventBroker')
 
+/**
+ * 
+ * @param {String} Name 
+ * @returns success status with user details
+ * @description - This function retrieves a user by their username.
+ */
 exports.getUserByName = async (Name) => {
     try {
         const response = await userBaseModel.findOne({ userName: Name })
@@ -17,6 +23,8 @@ exports.getUserByName = async (Name) => {
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
+
+//get user by any field
 exports.getUserByField = async (userField) => {
     try {
         const response = await userBaseModel.find(userField)
@@ -28,6 +36,7 @@ exports.getUserByField = async (userField) => {
         return { status: HTTPStatus.INTERNAL_SERVER_ERROR, body: error }
     }
 }
+
 //Not working yet - ToBe Fixed
 exports.saveUserPreferences = async (userId, payload) => {
     try {
@@ -46,6 +55,7 @@ exports.saveUserPreferences = async (userId, payload) => {
     }
 }
 
+// Delete user from the database
 exports.hardDeleteUser = async (userId) => {
     try {
         const response = await userBaseModel.findOneAndDelete({ _id: userId })
@@ -56,6 +66,7 @@ exports.hardDeleteUser = async (userId) => {
     }
 }
 
+// Soft delete user by setting isActive to false
 exports.softDeleteUser = async (userId) => {
     try {
         const response = await userBaseModel.findOneAndUpdate(
@@ -71,7 +82,7 @@ exports.softDeleteUser = async (userId) => {
     }
 }
 
-
+// Get user by ID
 exports.getUser = async(userId) => {
     try {
         const response = await userBaseModel.findById(userId)
@@ -92,6 +103,7 @@ exports.getBadge = async(badgeIDList) => {
     }
 }
 
+//get training session by userId
 exports.getTrainingSession = async(userId) => {
     try {
         const sessionRes = await trainingModel.find({ userId: userId })
@@ -102,6 +114,7 @@ exports.getTrainingSession = async(userId) => {
     }
 }
 
+// Get all subscriptions 
 exports.getSubscriptionDetails = async(subId) => {
     try {
         // Call subscription service to get subscription details
@@ -114,6 +127,7 @@ exports.getSubscriptionDetails = async(subId) => {
     }
 }
 
+// Get billing history by userId
 exports.getBillingHistory = async(userId) => {
     try {
         // Call billing service to get billing history
@@ -125,6 +139,7 @@ exports.getBillingHistory = async(userId) => {
     }
 }
 
+// Update user profile image path
 exports.updateProfileImagePath = async(userId, downloadURL) => {
     try {
         const response = await userBaseModel.findOneAndUpdate(
@@ -139,6 +154,7 @@ exports.updateProfileImagePath = async(userId, downloadURL) => {
     }
 }
 
+// Update user cover image path
 exports.updateCoverImagePath = async(userId, downloadURL) => {
     try {
         const response = await userBaseModel.findOneAndUpdate(

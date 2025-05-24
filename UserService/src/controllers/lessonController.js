@@ -2,6 +2,12 @@ const HTTPStatus = require('../enums/httpStatus')
 const {publishErrorEvent} = require('../../config/eventBroker')
 const lessonsModel = require("../models/lessonsModel")
 
+/**
+ * 
+ * @param {string} userId 
+ * @returns success status with all lessons of the user
+ * @description - This function retrieves all lessons for a given user by their userId.
+ */
 exports.getAllLessonsById = async (userId) => {
     try {
         const response = await lessonsModel.find({ userId: userId })
@@ -14,6 +20,7 @@ exports.getAllLessonsById = async (userId) => {
     }
 }
 
+//Add a new lesson for the user
 exports.addNewLesson = async (userId, payload) => {
     try {
         const newLesson = new lessonsModel({ ...payload, userId: userId })
@@ -26,6 +33,7 @@ exports.addNewLesson = async (userId, payload) => {
     }
 }
 
+// Update an existing lesson for the user
 exports.updateLesson = async (lessonId, userId, payload) => {
     try {
         const response = await lessonsModel.findOneAndUpdate({ _id: lessonId, userId: userId }, payload, { new: true })

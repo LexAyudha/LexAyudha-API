@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const sysWarn = require("../enums/systemWarnings");
 const HttpStatus = require("../enums/httpStatus");
+const { publishErrorEvent } = require("../../config/eventBroker");
 
 //Verifying JWT token
 exports.verifyToken = async (req) => {
@@ -32,6 +33,8 @@ exports.verifyToken = async (req) => {
 
     return { status: HttpStatus.OK, body: userData };
   } catch (error) {
+    await publishErrorEvent("verifyToken", error?.message);
+    console.error("JWT verification failed:", error.message);
     //If error occured during decode phase, responds with Invalid token message.
     return { status: HttpStatus.UNAUTHORIZED, body: sysWarn.INVALID_JWT_TOKEN };
   }

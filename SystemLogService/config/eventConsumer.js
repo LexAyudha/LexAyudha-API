@@ -1,6 +1,7 @@
 const amqp = require('amqplib');
 const {logger} = require('../config/logConfig')
 require('dotenv').config();
+const {publishErrorEvent} = require('./eventBroker.js')
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL
 const QUEUE_NAME = 'SYSTEM_LOG';
@@ -78,6 +79,7 @@ async function consumeEvents() {
       setTimeout(consumeEvents, 5000); // Reconnect after 5 seconds
     });
   } catch (error) {
+    await publishErrorEvent('consumeEvents', error.message);
     console.error('Failed to consume events:', error.message);
     setTimeout(consumeEvents, 5000); // Retry after 5 seconds
   }

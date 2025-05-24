@@ -1,6 +1,7 @@
 const amqp = require('amqplib');
 require('dotenv').config();
 
+
 const RABBITMQ_URL = process.env.RABBITMQ_URL // Update if using a cloud provider
 const QUEUE_NAME = 'critical_errors';
 

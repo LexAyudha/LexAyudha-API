@@ -3,6 +3,7 @@ const HttpStatus = require("../enums/httpStatus");
 const { logger } = require("../../config/logConfig");
 const { publishErrorEvent } = require("../../config/eventBroker");
 
+// Controller for handling log operations
 exports.insertLog = async(req,res) => {
   try {
     const logPayload = req?.body;
@@ -21,6 +22,7 @@ exports.insertLog = async(req,res) => {
   }
 }
 
+// Controller to delete a log from the database
 exports.deleteLogFromDB = async(req,res) => {
   try {
     const logId = req?.body?.logId;
@@ -31,6 +33,8 @@ exports.deleteLogFromDB = async(req,res) => {
     return { status: HttpStatus.INTERNAL_SERVER_ERROR, body: error };
   }
 }
+
+// Controller to get a specific log by ID
 exports.getALog = async(req,res) => {
   try {
     const logId = req?.params?.id;
@@ -42,6 +46,7 @@ exports.getALog = async(req,res) => {
   }
 }
 
+// Controller to get all logs from the database
 exports.getAllLogsInDB = async(req,res) => {
   try {
     const response = await logModel.find();
@@ -52,6 +57,7 @@ exports.getAllLogsInDB = async(req,res) => {
   }
 }
 
+// Controller to get logs filtered by a specific condition
 exports.getLogsFiltered = async(req,res) => {
   try {
     const filter = req?.body;

@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 const recipientEmail = 'thalangamat@gmail.com'
+const { publishErrorEvent } = require('../eventPublisher');
 
 export default async function mailService(payload) {
 
@@ -37,6 +38,7 @@ export default async function mailService(payload) {
 
         res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
+        await publishErrorEvent('mailService', error?.message);
         console.error(error);
         res.status(500).json({ message: 'Error sending email' });
     }

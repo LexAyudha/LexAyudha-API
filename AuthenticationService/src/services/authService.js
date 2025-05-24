@@ -10,6 +10,7 @@ const saltCount = 10;
 const HttpStatus = require("../enums/httpStatus");
 const { getAccessToken, getRefreshToken } = require("../services/jwtService");
 const userModel = require("../models/userModel");
+const { publishErrorEvent } = require("../../config/eventBroker");
 
 require("dotenv").config();
 
@@ -116,6 +117,7 @@ exports.generateOTP = async (req, res) => {
 
     res.status(HttpStatus.OK).json({ otp: otp });
   } catch (error) {
+    await publishErrorEvent('generateOTP', error?.message);
     console.error(error);
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating OTP' });
   }
