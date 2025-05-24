@@ -330,3 +330,31 @@ def send_report():
     except Exception as e:
         print(f"Error in send_report: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@emotion_detection_route.route("/reset", methods=["POST"])
+def reset_emotion_data():
+    try:
+        # Get student ID and activity ID from headers
+        student_id = request.headers.get('Student-Id')
+        activity_id = request.headers.get('Activity-Id')
+
+        if not student_id or not activity_id:
+            return jsonify({"error": "Student ID and Activity ID are required"}), 400
+
+        # Delete all emotion data for this student and activity
+        collection.delete_many({
+            "StudentId": student_id,
+            "ActivityId": activity_id
+        })
+
+        return jsonify({
+            "message": "Emotion data reset successfully",
+            "percentages": {
+                "frustration": 0,
+                "distraction": 0,
+                "engagement": 0
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
