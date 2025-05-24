@@ -68,34 +68,9 @@ jobs:
 
       - name: Install Node.js dependencies
         run: echo "dependencies installed"
-        # run: |
-        #   # Function to install dependencies based on package-lock.json existence
-        #   install_deps() {
-        #     local dir=$1
-        #     cd $dir
-        #     if [ -f "package-lock.json" ]; then
-        #       echo "Installing dependencies for $dir using npm ci"
-        #       npm ci
-        #     else
-        #       echo "Installing dependencies for $dir using npm install"
-        #       npm install
-        #     fi
-        #     cd ..
-        #   }
-
-        #   # Install dependencies for each service
-        #   install_deps "APIGateWay"
-        #   install_deps "AuthenticationService"
-        #   install_deps "UserService"
-        #   install_deps "EmailServices"
-        #   install_deps "SystemLogService"
-        #   install_deps "SpeechRateService"
 
       - name: Install Python dependencies
         run: echo "dependencies installed"
-        # run: |
-        #   cd flaskAIservices
-        #   pip install -r requirements.txt
 
       - name: Build Docker Images
         run: |
@@ -109,12 +84,21 @@ jobs:
 
       - name: Push Docker Images
         run: |
-          docker push chillbroh98/lexayudha-gateway:latest
-          docker push chillbroh98/lexayudha-auth:latest
-          docker push chillbroh98/lexayudha-user:latest
-          docker push chillbroh98/lexayudha-email:latest
-          docker push chillbroh98/lexayudha-systemlog:latest
-          docker push chillbroh98/lexayudha-speechrate:latest
+          # Tag images with Docker Hub username
+          docker tag gateway ${{ secrets.DOCKER_USERNAME }}/lexayudha-gateway:latest
+          docker tag auth ${{ secrets.DOCKER_USERNAME }}/lexayudha-auth:latest
+          docker tag user ${{ secrets.DOCKER_USERNAME }}/lexayudha-user:latest
+          docker tag email ${{ secrets.DOCKER_USERNAME }}/lexayudha-email:latest
+          docker tag systemlog ${{ secrets.DOCKER_USERNAME }}/lexayudha-systemlog:latest
+          docker tag speechrate ${{ secrets.DOCKER_USERNAME }}/lexayudha-speechrate:latest
+
+          # Push images to Docker Hub
+          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-gateway:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-auth:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-user:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-email:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-systemlog:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-speechrate:latest
 
   deploy:
     needs: build
@@ -143,7 +127,6 @@ jobs:
           jq --arg GATEWAY "${{ secrets.DOCKER_USERNAME }}/lexayudha-gateway:latest" \
              --arg AUTH "${{ secrets.DOCKER_USERNAME }}/lexayudha-auth:latest" \
              --arg USER "${{ secrets.DOCKER_USERNAME }}/lexayudha-user:latest" \
-             --arg FLASK "${{ secrets.DOCKER_USERNAME }}/lexayudha-flask:latest" \
              --arg EMAIL "${{ secrets.DOCKER_USERNAME }}/lexayudha-email:latest" \
              --arg SYSTEMLOG "${{ secrets.DOCKER_USERNAME }}/lexayudha-systemlog:latest" \
              --arg SPEECHRATE "${{ secrets.DOCKER_USERNAME }}/lexayudha-speechrate:latest" \
@@ -151,7 +134,6 @@ jobs:
                if .name == "gateway" then .image = $GATEWAY
                elif .name == "auth" then .image = $AUTH
                elif .name == "user" then .image = $USER
-               elif .name == "flask" then .image = $FLASK
                elif .name == "email" then .image = $EMAIL
                elif .name == "systemlog" then .image = $SYSTEMLOG
                elif .name == "speechrate" then .image = $SPEECHRATE
