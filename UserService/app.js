@@ -5,6 +5,7 @@ const userRoutes = require("./src/routes/userRoutes");
 const lessonsRoutes = require("./src/routes/lessonsRoutes");
 const dyslexicRoutes = require("./src/routes/dyslexicRoutes");
 const fileUploadRoutes = require("./src/routes/fileUploadRoutes");
+const pdfRoutes = require("./src/routes/pdfRoutes")
 
 
 connectDB();
@@ -18,6 +19,7 @@ app.use("/uploads", fileUploadRoutes);
 app.use(express.json());
 
 //json routes here
+app.use("/pdf-extract", pdfRoutes)
 app.use("/dyslexic", dyslexicRoutes)
 app.use("/lessons", lessonsRoutes)
 app.use("/", userRoutes);
