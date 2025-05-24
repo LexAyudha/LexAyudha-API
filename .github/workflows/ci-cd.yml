@@ -68,12 +68,27 @@ jobs:
 
       - name: Install Node.js dependencies
         run: |
-          cd APIGateWay && npm ci
-          cd ../AuthenticationService && npm ci
-          cd ../UserService && npm ci
-          cd ../EmailServices && npm ci
-          cd ../SystemLogService && npm ci
-          cd ../SpeechRateService && npm ci
+          # Function to install dependencies based on package-lock.json existence
+          install_deps() {
+            local dir=$1
+            cd $dir
+            if [ -f "package-lock.json" ]; then
+              echo "Installing dependencies for $dir using npm ci"
+              npm ci
+            else
+              echo "Installing dependencies for $dir using npm install"
+              npm install
+            fi
+            cd ..
+          }
+
+          # Install dependencies for each service
+          install_deps "APIGateWay"
+          install_deps "AuthenticationService"
+          install_deps "UserService"
+          install_deps "EmailServices"
+          install_deps "SystemLogService"
+          install_deps "SpeechRateService"
 
       - name: Install Python dependencies
         run: |
