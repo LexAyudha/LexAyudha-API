@@ -109,18 +109,9 @@ jobs:
 
       - name: Push Docker Images
         run: |
-          docker tag lexayudha-api_gateway ${{ secrets.DOCKER_USERNAME }}/lexayudha-gateway:latest
-          docker tag lexayudha-api_auth ${{ secrets.DOCKER_USERNAME }}/lexayudha-auth:latest
-          docker tag lexayudha-api_user ${{ secrets.DOCKER_USERNAME }}/lexayudha-user:latest
-          docker tag lexayudha-api_flask ${{ secrets.DOCKER_USERNAME }}/lexayudha-flask:latest
-          docker tag lexayudha-api_email ${{ secrets.DOCKER_USERNAME }}/lexayudha-email:latest
-          docker tag lexayudha-api_systemlog ${{ secrets.DOCKER_USERNAME }}/lexayudha-systemlog:latest
-          docker tag lexayudha-api_speechrate ${{ secrets.DOCKER_USERNAME }}/lexayudha-speechrate:latest
-
           docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-gateway:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-auth:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-user:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-flask:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-email:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-systemlog:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/lexayudha-speechrate:latest
