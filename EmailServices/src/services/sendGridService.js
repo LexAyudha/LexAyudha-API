@@ -4,13 +4,19 @@ sgMail.setApiKey(
   "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"
 );
 
-const sendEmail = async (to, subject, text, html) => {
+const sendEmail = async (to, subject, text, html, attachments = []) => {
   const msg = {
     to,
     from: "lexayudha.dev@fivermail.com",
     subject,
     text,
     html,
+    attachments: attachments.map(attachment => ({
+      content: attachment.content,
+      filename: attachment.filename,
+      type: attachment.type,
+      disposition: attachment.disposition
+    }))
   };
 
   try {
