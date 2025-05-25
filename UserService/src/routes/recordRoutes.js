@@ -12,12 +12,12 @@ const { saveRecords, getRecords } = require('../services/recordService')
 router.post('/', async(req,res) => {
  
   await saveRecords(req,res)
-  
 })
 
-//Get quiz sentences
+//Get records
 router.get('/:id', async(req,res) => { 
-   await getRecords(req,res)
+    
+  await getRecords(req,res)
 })
 
 
