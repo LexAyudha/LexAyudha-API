@@ -3,7 +3,7 @@
  * @functionality - extract JSON payload, setting response header, handling business logic, and setting up JWT tokens
  */
 const bcryptjs = require("bcryptjs");
-const CryptoJS = require('crypto-js');
+const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 const { createUser, getUserByField } = require("../controllers/userController");
 const saltCount = 10;
@@ -22,21 +22,20 @@ const hashPasswordGen = async (plainPsw) => {
 
 exports.register = async (req, res) => {
   const payload = req?.body;
- 
+
   const existingUser = await userModel.findOne({
     $and: [
       {
-        $or: [
-          { userName: payload?.userName },
-          
-        ]
+        $or: [{ userName: payload?.userName }],
       },
-      { isActive: true }
-    ]
+      { isActive: true },
+    ],
   });
 
   if (existingUser) {
-    return res.status(HttpStatus.CONFLICT).json({ message: 'User with the same email or username already exists' });
+    return res
+      .status(HttpStatus.CONFLICT)
+      .json({ message: "User with the same email or username already exists" });
   }
 
   const hashedPassword = await hashPasswordGen(payload?.password);
@@ -44,12 +43,12 @@ exports.register = async (req, res) => {
   //Constructing the new user payload
   const newUser = {
     userName: payload?.userName || `user${Math.floor(Math.random() * 1000)}`,
-    email: payload?.email, 
+    email: payload?.email,
     proPic: payload?.proPic || process.env.DEFAULT_PROFILE_PICTURE,
-    coverPic:payload?.coverPic || process.env.DEFAULT_COVER_PICTURE,
+    coverPic: payload?.coverPic || process.env.DEFAULT_COVER_PICTURE,
     password: hashedPassword,
   };
-  
+
   //Registering the user with createUser function in userController.js
   const response = await createUser(newUser);
 
@@ -72,10 +71,13 @@ exports.login = async (req, res) => {
     let authenticatedUser = null;
 
     for (const user of users) {
-      if(user?.isActive === false) {
+      if (user?.isActive === false) {
         break;
       }
-      const checkPswMatch = await bcryptjs.compare(payload?.password, user?.password);
+      const checkPswMatch = await bcryptjs.compare(
+        payload?.password,
+        user?.password
+      );
       if (checkPswMatch) {
         authenticatedUser = user;
         break;
@@ -87,24 +89,29 @@ exports.login = async (req, res) => {
       const accessToken = getAccessToken(
         authenticatedUser?._id,
         authenticatedUser?.userName,
-        authenticatedUser?.email,
-       
+        authenticatedUser?.email
       );
       const refreshToken = getRefreshToken(
         authenticatedUser?._id,
         authenticatedUser?.userName,
-        authenticatedUser?.email,
+        authenticatedUser?.email
       );
 
       // Setting the response header with OK and dispatching the JWT Tokens in a JSON body
-      res.status(HttpStatus.OK).json({ accessToken: accessToken, refreshToken: refreshToken });
+      res
+        .status(HttpStatus.OK)
+        .json({ accessToken: accessToken, refreshToken: refreshToken });
     } else {
       // If password didn't match, unauthorize the login request
-      res.status(HttpStatus.UNAUTHORIZED).json({ body: "User authentication failed!" });
+      res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ body: "User authentication failed!" });
     }
   } else {
     // if user not found sets request headers to unauthorized and sends authentication failed message to the client
-    res.status(HttpStatus.UNAUTHORIZED).json({ body: "User authentication failed!" });
+    res
+      .status(HttpStatus.UNAUTHORIZED)
+      .json({ body: "User authentication failed!" });
   }
 };
 
@@ -112,13 +119,15 @@ exports.generateOTP = async (req, res) => {
   try {
     const otp = Math.floor(10000 + Math.random() * 90000).toString();
     //send the otp to the user's email in here
-    console.log(otp)
+    console.log(otp);
     // const hashedOtp = CryptoJS.SHA256(otp).toString(CryptoJS.enc.Hex);
 
     res.status(HttpStatus.OK).json({ otp: otp });
   } catch (error) {
-    await publishErrorEvent('generateOTP', error?.message);
+    await publishErrorEvent("generateOTP", error?.message);
     console.error(error);
-    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating OTP' });
+    res
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Error generating OTP" });
   }
 };
