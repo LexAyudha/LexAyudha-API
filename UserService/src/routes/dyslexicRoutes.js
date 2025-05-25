@@ -1,5 +1,5 @@
 /**
- * @description - Route file responsible for the learner processes
+ * @description - Route file responsible for the dyslexic learner processes
  */
 
 //Requires
