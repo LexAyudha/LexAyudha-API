@@ -29,6 +29,7 @@ const app = express();
 const cors = require("cors");
 const emailRoutes = require("./src/routes/emailRoutes");
 const utilRoutes = require("./src/routes/utilRoutes");
+const { consumeEvents } = require("./config/eventConsumer");
 
 // ✅ Correctly apply middleware here
 app.use(express.json({ limit: "50mb" }));
@@ -37,5 +38,14 @@ app.use(cors());
 
 // your existing routes
 app.use("/email", emailRoutes);
+
+// Start consuming events from the event broker
+// consumeEvents()
+//   .then(() => {
+//     console.log("Event consumer started successfully.");
+//   })
+//   .catch((error) => {
+//     console.error("Error starting event consumer:", error);
+//   });
 
 module.exports = app;
