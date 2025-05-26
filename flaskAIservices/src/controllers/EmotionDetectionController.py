@@ -358,3 +358,27 @@ def reset_emotion_data():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@emotion_detection_route.route("/reset-percentages", methods=["POST"])
+def reset_emotion_percentages():
+    try:
+        # Get student ID from headers
+        student_id = request.headers.get("Student-Id")
+        if not student_id:
+            return jsonify({"error": "Student ID is required"}), 400
+
+        # Return reset percentages without deleting any data
+        return jsonify({
+            "message": "Emotion percentages reset successfully",
+            "percentages": {
+                "frustration": 0,
+                "distraction": 0,
+                "engagement": 0
+            },
+            "alert": None
+        }), 200
+
+    except Exception as e:
+        print(f"Error in reset_emotion_percentages: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
