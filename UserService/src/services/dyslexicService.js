@@ -1,4 +1,4 @@
-
+// Service for dyslexic lessons
 const axios = require('axios');
 const NodeCache = require("node-cache"); //Implementing caching for sentence generation
 const cache = new NodeCache({ stdTTL: 18000 }); // TTL set to 5 hours in seconds
@@ -423,6 +423,7 @@ exports.getGeneratedSentences = async (req, res) => {
                 chapters: []
             }
 
+            // Calling the sentence generation endpoint
             try {
                 const response = await axios.get(
                     `http://localhost:8005/sentence/generate`,
@@ -457,7 +458,7 @@ exports.getGeneratedSentences = async (req, res) => {
 
         console.log(`Generation completed with ${errorCount} errors`);
         
-        // If no lessons were generated or too many errors, use fallback
+        // If no lessons were generated or too many errors, use fallback lessons
         if (errorCount > 3 || lessonList.length === 0) {
             console.log('Using fallback lesson list due to errors');
             lessonList = fallbackLessonList;

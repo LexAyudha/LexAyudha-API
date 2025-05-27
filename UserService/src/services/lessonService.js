@@ -1,3 +1,4 @@
+// lesson dashboard functionalities
 const {getAllLessonsById, updateLesson,addNewLesson} = require('../controllers/lessonController')
 
 
