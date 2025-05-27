@@ -100,7 +100,7 @@ def generate_meaningful_sentences(prompt, target_word_count=3, num_sentences=10,
     Returns:
         list: A list of generated meaningful sentences with the specified word count.
     """
-    # Load the T5 model for sentence generation
+    # Load the T5 model for sentences generation
     print("Loading T5 model for sentence generation...")
     model_name = "google/flan-t5-small"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
