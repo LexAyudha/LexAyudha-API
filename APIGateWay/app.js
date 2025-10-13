@@ -19,17 +19,24 @@ app.use(cors());
 })();
 
 //host.docker.internal
+//Authentication server - 8001
 app.use("/api/auth", applyRateLimiter, proxy("http://localhost:8001")); //host.docker.internal:8001
+
+// User server - 8002
 app.use(
   "/api/user",
   applyRateLimiter,
   proxy("http://localhost:8002", { parseReqBody: false })
 ); //host.docker.internal:8002
+
+// SpeechService server - 8003
 app.use(
   "/api/speech",
   applyRateLimiter,
   proxy("http://localhost:8003", { parseReqBody: false })
 ); //host.docker.internal:8003
+
+//FastAPI ML server - 8005
 app.use(
   "/api/ml",
   applyRateLimiter,

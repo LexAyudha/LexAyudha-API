@@ -77,3 +77,7 @@ app.include_router(speach_prediction_route, prefix="/api")
 app.include_router(emotion_detection_route, prefix="/emotion")
 app.include_router(sentence_generation_route, prefix="/sentence")
 logger.info("Routes registered successfully.")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8005, reload=True)

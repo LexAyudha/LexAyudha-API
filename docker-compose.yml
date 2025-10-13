@@ -1,4 +1,12 @@
-version: "3.8"
+version: "3.9"
+
+networks:
+  LexBackend:
+    driver: bridge
+    
+volumes:
+  mongodb_data:
+    driver: local
 
 services:
   gateway:
@@ -12,39 +20,88 @@ services:
       - email
       - systemlog
       - speechrate
+    networks:
+      - LexBackend
 
   auth:
     container_name: auth
     build: ./AuthenticationService
     ports:
       - "8001:8001"
-
-  user:
-    container_name: user
-    build: ./UserService
-    ports:
-      - "8006:8006"
-
-  # flask:
-  #   container_name: flask
-  #   build: ./flaskAIservices
-  #   ports:
-  #     - "8005:8005"
+    networks:
+      - LexBackend
 
   email:
     container_name: email
     build: ./EmailServices
     ports:
       - "8002:8002"
+    networks:
+      - LexBackend
 
   systemlog:
     container_name: systemlog
     build: ./SystemLogService
     ports:
       - "8003:8003"
+    networks:
+      - LexBackend
 
   speechrate:
     container_name: speechrate
     build: ./SpeechRateService
     ports:
       - "8004:8004"
+    networks:
+      - LexBackend
+
+  fastapi:
+    container_name: fastapi
+    build: ./FastAPIService
+    ports:
+      - "8005:8005"
+    networks:
+      - LexBackend
+
+  user:
+    container_name: user
+    build: ./UserService
+    ports:
+      - "8006:8006"
+    networks:
+      - LexBackend
+    
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: lexAdmin
+      RABBITMQ_DEFAULT_PASS: lexAdmin
+    networks:
+      - LexBackend
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Lex_mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: Lex_mongo_pass
+      MONGO_INITDB_DATABASE: LexAyudhaDB
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - LexBackend
+  
+  # flask:
+  #   container_name: flask
+  #   build: ./flaskAIservices
+  #   ports:
+  #     - "8005:8005"
+
