@@ -1,0 +1,9 @@
+.venv
+.pycharm
+
+# Python compiled bytecode files
+__pycache__/
+*.pyc
+
+servers.json
+*.pdf
