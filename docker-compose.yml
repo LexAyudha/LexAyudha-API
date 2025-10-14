@@ -9,6 +9,21 @@ volumes:
     driver: local
 
 services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Lex_mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: Lex_mongo_pass
+      MONGO_INITDB_DATABASE: LexAyudhaDB
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - LexBackend
+
   gateway:
     container_name: gateway
     build: ./APIGateWay
@@ -20,6 +35,8 @@ services:
       - email
       - systemlog
       - speechrate
+      - mongo
+      - fastapi
     networks:
       - LexBackend
 
@@ -28,6 +45,8 @@ services:
     build: ./AuthenticationService
     ports:
       - "8001:8001"
+    depends_on:
+      - mongo
     networks:
       - LexBackend
 
@@ -36,6 +55,8 @@ services:
     build: ./EmailServices
     ports:
       - "8002:8002"
+    depends_on:
+      - mongo
     networks:
       - LexBackend
 
@@ -44,6 +65,8 @@ services:
     build: ./SystemLogService
     ports:
       - "8003:8003"
+    depends_on:
+      - mongo
     networks:
       - LexBackend
 
@@ -52,6 +75,8 @@ services:
     build: ./SpeechRateService
     ports:
       - "8004:8004"
+    depends_on:
+      - mongo
     networks:
       - LexBackend
 
@@ -60,6 +85,8 @@ services:
     build: ./FastAPIService
     ports:
       - "8005:8005"
+    depends_on:
+      - mongo
     networks:
       - LexBackend
 
@@ -68,12 +95,14 @@ services:
     build: ./UserService
     ports:
       - "8006:8006"
+    depends_on:
+      - mongo
     networks:
       - LexBackend
     
   rabbitmq:
     image: rabbitmq:3.11-management
-    container_name: rabbitmq
+    container_name: lexrabbitmq
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: lexAdmin
@@ -84,18 +113,21 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-  mongodb:
-    image: mongo:6.0
-    container_name: mongodb
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
     restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: Lex_mongo_user
-      MONGO_INITDB_ROOT_PASSWORD: Lex_mongo_pass
-      MONGO_INITDB_DATABASE: LexAyudhaDB
+    depends_on:
+      - mongo
     ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: Lex_mongo_user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: Lex_mongo_pass
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
     networks:
       - LexBackend
   
