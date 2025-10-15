@@ -48,4 +48,14 @@ app.use("/email", emailRoutes);
 //     console.error("Error starting event consumer:", error);
 //   });
 
+//Global Exception Handler
+app.use((err, req, res, next) => {
+  console.error(`[${new Date().toISOString()}] ERROR at Email Server:`, err.stack || err);
+
+  res.status(err.status || 500).json({
+    status: 'error',
+    message: err.message || 'Internal Server Error',
+  });
+});
+
 module.exports = app;

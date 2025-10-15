@@ -1,6 +1,29 @@
-version: "3.8"
+version: "3.9"
+
+networks:
+  LexBackend:
+    driver: bridge
+    
+volumes:
+  mongodb_data:
+    driver: local
 
 services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Lex_mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: Lex_mongo_pass
+      MONGO_INITDB_DATABASE: LexAyudhaDB
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - LexBackend
+
   gateway:
     container_name: gateway
     build: ./APIGateWay
@@ -12,39 +35,105 @@ services:
       - email
       - systemlog
       - speechrate
+      - mongo
+      - fastapi
+    networks:
+      - LexBackend
 
   auth:
     container_name: auth
     build: ./AuthenticationService
     ports:
       - "8001:8001"
-
-  user:
-    container_name: user
-    build: ./UserService
-    ports:
-      - "8006:8006"
-
-  # flask:
-  #   container_name: flask
-  #   build: ./flaskAIservices
-  #   ports:
-  #     - "8005:8005"
+    depends_on:
+      - mongo
+    networks:
+      - LexBackend
 
   email:
     container_name: email
     build: ./EmailServices
     ports:
       - "8002:8002"
+    depends_on:
+      - mongo
+    networks:
+      - LexBackend
 
   systemlog:
     container_name: systemlog
     build: ./SystemLogService
     ports:
       - "8003:8003"
+    depends_on:
+      - mongo
+    networks:
+      - LexBackend
 
   speechrate:
     container_name: speechrate
     build: ./SpeechRateService
     ports:
       - "8004:8004"
+    depends_on:
+      - mongo
+    networks:
+      - LexBackend
+
+  fastapi:
+    container_name: fastapi
+    build: ./FastAPIService
+    ports:
+      - "8005:8005"
+    depends_on:
+      - mongo
+    networks:
+      - LexBackend
+
+  user:
+    container_name: user
+    build: ./UserService
+    ports:
+      - "8006:8006"
+    depends_on:
+      - mongo
+    networks:
+      - LexBackend
+    
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: lexrabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: lexAdmin
+      RABBITMQ_DEFAULT_PASS: lexAdmin
+    networks:
+      - LexBackend
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: Lex_mongo_user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: Lex_mongo_pass
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    networks:
+      - LexBackend
+  
+  # flask:
+  #   container_name: flask
+  #   build: ./flaskAIservices
+  #   ports:
+  #     - "8005:8005"
+

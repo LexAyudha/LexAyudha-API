@@ -27,6 +27,14 @@ app.use("/lessons", lessonsRoutes)
 app.use("/", userRoutes);
 
 
+//Global Exception Handler
+app.use((err, req, res, next) => {
+  console.error(`[${new Date().toISOString()}] ERROR at User Server:`, err.stack || err);
 
+  res.status(err.status || 500).json({
+    status: 'error',
+    message: err.message || 'Internal Server Error',
+  });
+});
 //Exporting app to be used by the server.js
 module.exports = app;
