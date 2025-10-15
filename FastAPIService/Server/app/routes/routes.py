@@ -18,8 +18,8 @@ emotion_detection_route = APIRouter()
 sentence_generation_route = APIRouter()
 
 # Health check route
-@health_check_route.get("/health")
-async def health_check():
+@health_check_route.get("/healthCheck")
+def health_check():
     return JSONResponse( 
     content= {"status": "FastAPI server is running"}, 
     status_code = status.HTTP_200_OK
@@ -32,7 +32,9 @@ async def predict(req: Request):
 
 @emotion_detection_route.post("/predict")
 async def emotion_predict(req: Request):
-    return await get_emotion_prediction(req)    
+    student_id = req.headers.get("student-id")
+    activity_id = req.headers.get("activity-id")
+    return await get_emotion_prediction(req, student_id, activity_id)    
 
 @emotion_detection_route.get("/analytics")
 async def analytics(req: Request):

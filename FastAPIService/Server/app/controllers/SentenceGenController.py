@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
-from app.modelController.SentenceGenModel import generate_meaningful_sentences
+from app.services.SentenceGenService import generate_meaningful_sentences
 from threading import Lock
 import queue
 import logging

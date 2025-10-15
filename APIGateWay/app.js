@@ -41,7 +41,24 @@ app.use(
   "/api/ml",
   applyRateLimiter,
   proxy("http://localhost:8005", { parseReqBody: false })
-); //host.docker.internal:8003
+); //host.docker.internal:8005
+
+//Email server - 8007
+app.use(
+  "/api/smtp",
+  applyRateLimiter,
+  proxy("http://localhost:8007", { parseReqBody: false })
+); //host.docker.internal:8007
+
+//Global Exception Handler
+app.use((err, req, res, next) => {
+  console.error(`[${new Date().toISOString()}] ERROR at APIGateWay Server:`, err.stack || err);
+
+  res.status(err.status || 500).json({
+    status: 'error',
+    message: err.message || 'Internal Server Error',
+  });
+});
 
 //Exporting app to be used by the server.js
 module.exports = app;

@@ -4,18 +4,35 @@ const services = [
     { name: 'Authentication server', url: 'http://localhost:8001/healthCheck' },
     { name: 'User server', url: 'http://localhost:8002/healthCheck' },
     { name: 'SpeechRateService server', url: 'http://localhost:8003/healthCheck' },
-    { name: 'Flask server', url: 'http://localhost:8005/healthCheck' },
+    { name: 'FastAPI server', url: 'http://localhost:8005/healthCheck' },
     { name: 'Email server', url: 'http://localhost:8007/healthCheck' },
-    { name: 'Log&Monitoring server', url: 'http://localhost:8008/healthCheck' }
+    { name: 'Log&Monitoring server', url: 'http://localhost:8008/healthCheck' },
+    { name: 'RabbitMQ server', url: 'http://localhost:15672/api/healthchecks/node' }
 ];
 
 const checkServiceHealth = async (service) => {
-    try {
-        const response = await axios.get(service.url, { timeout: 5000 });
-        return response.status === 200;
-    } catch (error) {
-        return false;
+  try {
+    const config = { timeout: 5000 };
+
+    // Add auth for RabbitMQ
+    if (service.name === 'RabbitMQ server') {
+      config.auth = {
+        username: 'lexAdmin',
+        password: 'lexAdmin'
+      };
     }
+
+    const response = await axios.get(service.url, config);
+    console.log(service.name);
+    if (service.name === 'RabbitMQ server') {
+        
+      return response.data?.status === 'ok';
+    }
+
+    return response.status === 200;
+  } catch (error) {
+    return false;
+  }
 };
 
 const performHealthCheck = async () => {

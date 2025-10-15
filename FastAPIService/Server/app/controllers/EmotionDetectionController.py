@@ -75,20 +75,25 @@ def generate_student_summary(analytics_data):
 @router.post("/predict")
 async def get_emotion_prediction(
     request: Request,
-    student_id: str = Header(None),
-    activity_id: str = Header(None)
+    student_id: str,
+    activity_id: str
 ):
     try:
+        print(f"Header - {request.headers}")
         form = await request.form()
+        
         file: UploadFile = form.get("file")
+
+        print(f"Received file: {file.filename}, File Size: {file.size}, student_id: {student_id}, activity_id: {activity_id}")
         
         if not student_id or not activity_id:
             return JSONResponse({"error": "Student ID and Activity ID are required"}, status_code=400)
 
         random_number = random.randint(1000, 9999)
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        temp_dir = os.path.join(base_dir, "../assets/temp")
+        temp_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "assets", "temp"))
         os.makedirs(temp_dir, exist_ok=True)
+
+        print(f"Temporary directory: {temp_dir}")
 
         temp_file_path = os.path.join(temp_dir, f"emo_temp_{random_number}.png")
 

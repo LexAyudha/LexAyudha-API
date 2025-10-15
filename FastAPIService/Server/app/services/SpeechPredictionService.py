@@ -1,4 +1,5 @@
-from app.modelController.SpeechPredictionModel import load_model, predict_with_model
+from app.modelController.SpeechPredictionModel import predict_with_model
+from app.core.model_registry import model_registry
 import librosa
 import librosa.display
 import matplotlib
@@ -8,13 +9,9 @@ import numpy as np
 import os
 from pydub import AudioSegment
 
-# Load the model once at service initialization
-SpeechPredict_model = load_model()
 
-if isinstance(SpeechPredict_model, dict) and 'error' in SpeechPredict_model:
-    print(f"Error loading model: {SpeechPredict_model['error']}")
-else:
-    print("Model is loaded okay")
+
+
 
 target_length = 10 * 1000  # 10 seconds in milliseconds
 
@@ -94,7 +91,9 @@ def make_prediction(temp_path, temp_audio_path, temp_img_name, temp_audio_name):
     if not spectrogram_path:
         return 'Error in spectrogram creation'
 
+    speech_predict_model = model_registry.get("speechrate")
+
     # Use the model to make predictions
-    prediction = predict_with_model(SpeechPredict_model, spectrogram_path, preprocessed_audio_path)
+    prediction = predict_with_model(speech_predict_model, spectrogram_path, preprocessed_audio_path)
 
     return prediction

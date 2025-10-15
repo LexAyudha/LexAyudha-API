@@ -7,12 +7,25 @@ import logging
 import sys
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.routes import speach_prediction_route, emotion_detection_route, health_check_route, sentence_generation_route
+from app.core.model_registry import model_registry
 
 # FastAPI app initialization with lifespan events
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code here
-    logging.info("Starting up...")
+    logging.info("🚀 Starting up... Loading models")
+
+    # ---------------- Load all models once ----------------
+    try:
+        model_registry.load_emotion_model()
+        model_registry.load_speechrate_model()
+        model_registry.load_t5_model()
+    except Exception as e:
+        logging.error(f"❌ Error during model loading: {e}")
+        raise  # Re-raise the exception to prevent startup with failed model loading
+    
+    logging.info("✅ All models loaded successfully.")
+
     yield
     # Shutdown code here
     logging.info("Shutting down...")
@@ -60,7 +73,7 @@ app.middleware('http')(catch_exceptions_middleware)
 # CORS origins
 origins = [
     "http://localhost",
-    "http://localhost:3000",
+    "http://localhost:8000",
 ]
 # CORS configuration
 app.add_middleware(

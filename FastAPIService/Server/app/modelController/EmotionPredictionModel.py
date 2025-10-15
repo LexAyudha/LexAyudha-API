@@ -120,6 +120,7 @@ def load_model():
         return {"error": f"An error occurred while loading the model: {str(e)}"}
 
 def predict_with_model(img_path, student_id, activity_id):
+    print(f"Predicting emotion for image: {img_path}")
     try:
         # Perform emotion analysis using DeepFace
         objs = DeepFace.analyze(
